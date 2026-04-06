@@ -1,0 +1,276 @@
+{% extends "base.html" %}
+
+{% block title %}{{ user.name }} - User Detail | LIFESTYLE MART{% endblock %}
+
+{% block content %}
+<style>
+.user-detail-container {
+    padding: 30px 0;
+    background: #f5f5f5;
+    min-height: calc(100vh - 200px);
+}
+
+.admin-card {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    margin-bottom: 20px;
+    overflow: hidden;
+}
+
+.admin-card-header {
+    background: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%);
+    color: white;
+    padding: 20px;
+}
+
+.admin-card-header h4 {
+    margin: 0;
+    font-weight: 700;
+}
+
+.admin-card-body {
+    padding: 20px;
+}
+
+.user-avatar {
+    width: 100px;
+    height: 100px;
+    background: #ff6b35;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.5rem;
+    color: white;
+    margin: 0 auto 20px;
+}
+
+.user-info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+}
+
+.info-item {
+    padding: 15px;
+    background: #f8f9fa;
+    border-radius: 6px;
+}
+
+.info-label {
+    font-size: 0.75rem;
+    color: #6c757d;
+    text-transform: uppercase;
+    margin-bottom: 5px;
+}
+
+.info-value {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #333;
+}
+
+.role-badge {
+    display: inline-block;
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.role-admin { background: #dc3545; color: white; }
+.role-user { background: #28a745; color: white; }
+.role-seller { background: #007bff; color: white; }
+
+.admin-btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: inline-block;
+}
+
+.admin-btn-primary {
+    background: #ff6b35;
+    color: white;
+}
+
+.admin-btn-primary:hover {
+    background: #e55a2b;
+    color: white;
+}
+
+.admin-btn-secondary {
+    background: #6c757d;
+    color: white;
+}
+
+.admin-btn-secondary:hover {
+    background: #5a6268;
+    color: white;
+}
+
+.order-table {
+    width: 100%;
+}
+
+.order-table th,
+.order-table td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.order-table th {
+    background: #f8f9fa;
+    font-weight: 600;
+    font-size: 0.875rem;
+}
+
+.status-badge {
+    display: inline-block;
+    padding: 5px 10px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.status-pending { background: #fff3cd; color: #856404; }
+.status-processing { background: #cce5ff; color: #004085; }
+.status-shipped { background: #d4edda; color: #155724; }
+.status-delivered { background: #d1ecf1; color: #0c5460; }
+.status-cancelled { background: #f8d7da; color: #721c24; }
+</style>
+
+<div class="user-detail-container">
+    <div class="container">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h3>User Profile</h3>
+            <a href="{{ url_for('admin_users') }}" class="admin-btn admin-btn-secondary">
+                <i class="fas fa-arrow-left me-2"></i>Back to Users
+            </a>
+        </div>
+
+        <!-- User Profile Card -->
+        <div class="row">
+            <div class="col-md-4">
+                <div class="admin-card text-center">
+                    <div class="admin-card-body">
+                        <div class="user-avatar">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <h4 class="mb-2">{{ user.name }}</h4>
+                        <span class="role-badge role-{{ user.role }}">{{ user.role.title() }}</span>
+                        <p class="text-muted mt-3 mb-1">
+                            <i class="fas fa-envelope me-2"></i>{{ user.email }}
+                        </p>
+                        <p class="text-muted">
+                            <i class="fas fa-calendar me-2"></i>Joined {{ user.created_at.strftime('%d %b %Y') }}
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-8">
+                <div class="admin-card">
+                    <div class="admin-card-header">
+                        <h4><i class="fas fa-info-circle me-2"></i>User Information</h4>
+                    </div>
+                    <div class="admin-card-body">
+                        <div class="user-info-grid">
+                            <div class="info-item">
+                                <div class="info-label">Full Name</div>
+                                <div class="info-value">{{ user.name }}</div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-label">Email</div>
+                                <div class="info-value">{{ user.email }}</div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-label">Phone</div>
+                                <div class="info-value">{{ user.phone or 'Not provided' }}</div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-label">Role</div>
+                                <div class="info-value">
+                                    <span class="role-badge role-{{ user.role }}">{{ user.role.title() }}</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        {% if user.address %}
+                        <div class="mt-4">
+                            <h6 class="fw-bold mb-2">Address</h6>
+                            <p>{{ user.address }}</p>
+                        </div>
+                        {% endif %}
+
+                        {% if user.id != current_user.id %}
+                        <div class="mt-4 pt-4 border-top">
+                            <h6 class="fw-bold mb-3">Change User Role</h6>
+                            <form action="{{ url_for('admin_toggle_user_role', id=user.id) }}" method="POST" class="d-flex gap-2">
+                                <select name="role" class="form-select" style="width: auto;" aria-label="Select user role">
+                                    <option value="user" {% if user.role == 'user' %}selected{% endif %}>User</option>
+                                    <option value="admin" {% if user.role == 'admin' %}selected{% endif %}>Admin</option>
+                                    <option value="seller" {% if user.role == 'seller' %}selected{% endif %}>Seller</option>
+                                </select>
+                                <button type="submit" class="admin-btn admin-btn-primary">
+                                    <i class="fas fa-save me-2"></i>Update Role
+                                </button>
+                            </form>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- User Orders -->
+        <div class="admin-card">
+            <div class="admin-card-header">
+                <h4><i class="fas fa-shopping-bag me-2"></i>Order History ({{ user.orders|length }})</h4>
+            </div>
+            <div class="admin-card-body">
+                {% if user.orders %}
+                <table class="order-table">
+                    <thead>
+                        <tr>
+                            <th>Order #</th>
+                            <th>Date</th>
+                            <th>Status</th>
+                            <th>Total</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for order in user.orders %}
+                        <tr>
+                            <td>{{ order.order_number }}</td>
+                            <td>{{ order.created_at.strftime('%d %b %Y') }}</td>
+                            <td>
+                                <span class="status-badge status-{{ order.status.lower() }}">{{ order.status.title() }}</span>
+                            </td>
+                            <td>৳{{ "%.2f"|format(order.total_amount) }}</td>
+                            <td>
+                                <a href="{{ url_for('admin_order_detail', id=order.id) }}" class="admin-btn admin-btn-primary" style="padding: 5px 15px; font-size: 0.875rem;">
+                                    <i class="fas fa-eye me-1"></i>View
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                {% else %}
+                <div class="text-center py-4">
+                    <i class="fas fa-shopping-bag fa-3x text-muted mb-3"></i>
+                    <h5 class="text-muted">No orders yet</h5>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

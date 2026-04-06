@@ -1,0 +1,342 @@
+{% extends "base.html" %}
+
+{% block title %}Shopping Cart - LIFESTYLE MART{% endblock %}
+
+{% block content %}
+<style>
+.cart-container {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+    padding: 30px;
+    margin-top: 30px;
+}
+
+.cart-header {
+    background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+    color: white;
+    padding: 30px;
+    border-radius: 12px 12px 0 0;
+    margin: -30px -30px 30px -30px;
+}
+
+.cart-item {
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 15px;
+    transition: all 0.3s ease;
+}
+
+.cart-item:hover {
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+.cart-item-image {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    border-radius: 8px;
+}
+
+.cart-item-details h6 {
+    font-weight: 600;
+    color: var(--text-dark);
+    margin-bottom: 10px;
+}
+
+.cart-item-price {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--primary-color);
+}
+
+.quantity-control {
+    display: flex;
+    align-items: center;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    overflow: hidden;
+}
+
+.quantity-control button {
+    background: var(--bg-light);
+    border: none;
+    padding: 8px 12px;
+    font-weight: 600;
+    transition: background 0.3s ease;
+}
+
+.quantity-control button:hover {
+    background: var(--primary-color);
+    color: white;
+}
+
+.quantity-control input {
+    border: none;
+    text-align: center;
+    width: 50px;
+    font-weight: 600;
+}
+
+.summary-card {
+    background: var(--bg-light);
+    border-radius: 12px;
+    padding: 25px;
+    position: sticky;
+    top: 150px;
+}
+
+.summary-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 15px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.summary-row:last-child {
+    border-bottom: none;
+    margin-bottom: 20px;
+}
+
+.summary-total {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--primary-color);
+}
+
+.btn-checkout {
+    background: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 15px;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 1.1rem;
+    transition: all 0.3s ease;
+    width: 100%;
+}
+
+.btn-checkout:hover {
+    background: var(--accent-color);
+    transform: translateY(-2px);
+}
+
+.btn-continue {
+    background: transparent;
+    color: var(--primary-color);
+    border: 2px solid var(--primary-color);
+    padding: 12px 25px;
+    border-radius: 6px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: inline-block;
+}
+
+.btn-continue:hover {
+    background: var(--primary-color);
+    color: white;
+}
+
+.empty-cart {
+    text-align: center;
+    padding: 60px 20px;
+}
+
+.empty-cart i {
+    font-size: 4rem;
+    color: var(--text-light);
+    margin-bottom: 20px;
+}
+
+.promo-code {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.promo-code input {
+    flex: 1;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    padding: 10px;
+}
+
+.promo-code button {
+    background: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 6px;
+    font-weight: 600;
+    transition: background 0.3s ease;
+}
+
+.promo-code button:hover {
+    background: var(--accent-color);
+}
+</style>
+
+<div class="container">
+    <div class="cart-container">
+        <!-- Cart Header -->
+        <div class="cart-header">
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <h1 class="mb-2">
+                        <i class="fas fa-shopping-cart me-3"></i>Shopping Cart
+                    </h1>
+                    <p class="mb-0">
+                        {% if products %}
+                            {{ products|length }} items in your cart
+                        {% else %}
+                            Your cart is empty
+                        {% endif %}
+                    </p>
+                </div>
+                <div class="col-md-4 text-end">
+                    <a href="{{ url_for('shop') }}" class="btn-continue">
+                        <i class="fas fa-arrow-left me-2"></i>Continue Shopping
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        {% if products %}
+        <div class="row">
+            <!-- Cart Items -->
+            <div class="col-lg-8">
+                {% for item in products %}
+                <div class="cart-item">
+                    <div class="row align-items-center">
+                        <div class="col-md-2">
+                            <img src="{{ item.product.image or 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1399&q=80' }}" 
+                                 alt="{{ item.product.name }}" class="cart-item-image">
+                        </div>
+                        <div class="col-md-4">
+                            <div class="cart-item-details">
+                                <h6>{{ item.product.name }}</h6>
+                                <p class="text-muted mb-2">SKU: LSM{{ item.product.id }}</p>
+                                <div class="product-rating">
+                                    <div class="stars">
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star-half-alt"></i>
+                                    </div>
+                                    <span class="rating-count">(4.5)</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="cart-item-price">৳{{ "%.2f"|format(item.product.price) }}</div>
+                            <small class="text-muted">per item</small>
+                        </div>
+                        <div class="col-md-2">
+                            <form action="{{ url_for('update_cart') }}" method="POST" class="update-cart-form">
+                                <input type="hidden" name="product_id" value="{{ item.product.id }}">
+                                <div class="quantity-control">
+                                    <button type="button" onclick="updateQuantity({{ item.product.id }}, -1)">-</button>
+                                    <input type="number" name="quantity" value="{{ item.quantity }}" min="1" max="10" readonly>
+                                    <button type="button" onclick="updateQuantity({{ item.product.id }}, 1)">+</button>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="col-md-2 text-end">
+                            <div class="cart-item-price">৳{{ "%.2f"|format(item.product.price * item.quantity) }}</div>
+                            <form action="{{ url_for('remove_from_cart') }}" method="POST" class="mt-2">
+                                <input type="hidden" name="product_id" value="{{ item.product.id }}">
+                                <button type="submit" class="btn btn-sm btn-outline-danger">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+
+            <!-- Order Summary -->
+            <div class="col-lg-4">
+                <div class="summary-card">
+                    <h5 class="mb-4">Order Summary</h5>
+                    
+                    <!-- Promo Code -->
+                    <form action="{{ url_for('apply_promo') }}" method="POST" class="promo-code mb-3">
+                        <input type="text" name="promo_code" placeholder="Enter Promo code" class="form-control" value="{{ session.get('promo_code', '') }}" required>
+                        <button type="submit">Apply</button>
+                    </form>
+                    {% if session.get('promo_code') %}
+                    <div class="alert alert-success py-2 mt-2 small d-flex justify-content-between align-items-center shadow-sm" style="border-radius: 8px;">
+                        <span><i class="fas fa-check-circle me-1"></i> Code <strong>{{ session.get('promo_code') }}</strong> applied!</span>
+                        <a href="{{ url_for('remove_promo') }}" class="text-danger"><i class="fas fa-times-circle"></i></a>
+                    </div>
+                    {% endif %}
+
+                    <div class="summary-row mt-3">
+                        <span>Subtotal ({{ products|length }} items)</span>
+                        <span>৳{{ "%.2f"|format(total) }}</span>
+                    </div>
+                    {% set delivery_fee = 50 %}
+                    <div class="summary-row">
+                        <span>Shipping Fee</span>
+                        <span id="shipping-fee">৳{{ "%.2f"|format(delivery_fee) }}</span>
+                    </div>
+                    {% set tax = total * 0.15 %}
+                    <div class="summary-row">
+                        <span>Tax (VAT 15%)</span>
+                        <span id="tax">৳{{ "%.2f"|format(tax) }}</span>
+                    </div>
+                    {% set promo_discount = session.get('promo_discount', 0) %}
+                    {% if promo_discount > 0 %}
+                    <div class="summary-row text-success">
+                        <span>Promo Discount</span>
+                        <span>-৳{{ "%.2f"|format(promo_discount) }}</span>
+                    </div>
+                    {% endif %}
+                    <div class="summary-row">
+                        <span class="summary-total">Total</span>
+                        <span class="summary-total" id="grand-total">৳{{ "%.2f"|format(total + delivery_fee + tax - promo_discount) }}</span>
+                    </div>
+
+                    <a href="{{ url_for('checkout') }}" class="btn-checkout">
+                        <i class="fas fa-lock me-2"></i>Proceed to Checkout
+                    </a>
+
+                    <div class="text-center mt-3">
+                        <small class="text-muted">
+                            <i class="fas fa-shield-alt me-1"></i>
+                            Secure Checkout powered by SSL
+                        </small>
+                    </div>
+
+                    <!-- Payment Methods -->
+                    <div class="mt-4">
+                        <h6 class="mb-3">We Accept</h6>
+                        <div class="d-flex gap-2 flex-wrap">
+                            <i class="fab fa-cc-visa fa-2x text-muted"></i>
+                            <i class="fab fa-cc-mastercard fa-2x text-muted"></i>
+                            <i class="fab fa-cc-amex fa-2x text-muted"></i>
+                            <i class="fas fa-mobile-alt fa-2x text-muted"></i>
+                            <i class="fas fa-university fa-2x text-muted"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% else %}
+        <div class="text-center py-5">
+            <i class="fas fa-shopping-cart fa-3x text-muted mb-3"></i>
+            <h4>Your cart is empty</h4>
+            <p class="text-muted">Looks like you haven't added any products to your cart yet.</p>
+            <a href="{{ url_for('shop') }}" class="btn btn-warning btn-lg">
+                <i class="fas fa-shopping-bag me-2"></i>Start Shopping
+            </a>
+        </div>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}

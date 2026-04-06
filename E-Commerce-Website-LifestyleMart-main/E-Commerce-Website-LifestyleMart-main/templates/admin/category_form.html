@@ -1,0 +1,305 @@
+{% extends "base.html" %}
+
+{% block title %}{{ title }} - Admin Panel{% endblock %}
+
+{% block content %}
+<style>
+.admin-container {
+    background: #f8f9fa;
+    min-height: 100vh;
+}
+
+.admin-sidebar {
+    background: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%);
+    min-height: 100vh;
+    box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+}
+
+.admin-sidebar .nav-link {
+    color: rgba(255,255,255,0.9);
+    padding: 15px 20px;
+    border-radius: 8px;
+    margin: 5px 10px;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.admin-sidebar .nav-link:hover,
+.admin-sidebar .nav-link.active {
+    background: rgba(255,255,255,0.2);
+    color: white;
+    transform: translateX(5px);
+}
+
+.admin-main {
+    padding: 30px;
+}
+
+.admin-header {
+    background: white;
+    border-radius: 12px;
+    padding: 20px 30px;
+    margin-bottom: 30px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.category-form {
+    background: white;
+    border-radius: 12px;
+    padding: 30px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+    max-width: 800px;
+}
+
+.form-group {
+    margin-bottom: 25px;
+}
+
+.form-label {
+    font-weight: 600;
+    color: var(--text-dark);
+    margin-bottom: 8px;
+}
+
+.form-control {
+    border: 2px solid #e9ecef;
+    border-radius: 8px;
+    padding: 12px 15px;
+    transition: all 0.3s ease;
+}
+
+.form-control:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 0.2rem rgba(255, 107, 53, 0.25);
+}
+
+.btn-primary {
+    background: var(--primary-color);
+    border: none;
+    padding: 12px 30px;
+    border-radius: 8px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.btn-primary:hover {
+    background: var(--accent-color);
+    transform: translateY(-2px);
+}
+
+.btn-secondary {
+    background: #6c757d;
+    border: none;
+    padding: 12px 30px;
+    border-radius: 8px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.btn-secondary:hover {
+    background: #5a6268;
+    transform: translateY(-2px);
+}
+
+.category-info {
+    background: #f8f9fa;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 25px;
+}
+
+.category-info h5 {
+    color: var(--primary-color);
+    margin-bottom: 15px;
+}
+
+.category-info ul {
+    margin-bottom: 0;
+}
+
+.category-info li {
+    margin-bottom: 8px;
+}
+
+.help-text {
+    font-size: 0.875rem;
+    color: #6c757d;
+    margin-top: 5px;
+}
+</style>
+
+<div class="admin-container">
+    <div class="row g-0">
+        <!-- Admin Sidebar -->
+        <div class="col-md-3 col-lg-2">
+            <div class="admin-sidebar p-3">
+                <div class="text-center mb-4">
+                    <h4 class="text-white">Admin Panel</h4>
+                    <small class="text-white-50">LIFESTYLE MART</small>
+                </div>
+                
+                <nav class="nav flex-column">
+                    <a href="{{ url_for('admin_dashboard') }}" class="nav-link">
+                        <i class="fas fa-tachometer-alt"></i>
+                        Dashboard
+                    </a>
+                    <a href="#" class="nav-link">
+                        <i class="fas fa-box"></i>
+                        Products
+                    </a>
+                    <a href="#" class="nav-link">
+                        <i class="fas fa-shopping-cart"></i>
+                        Orders
+                    </a>
+                    <a href="#" class="nav-link">
+                        <i class="fas fa-users"></i>
+                        Users
+                    </a>
+                    <a href="{{ url_for('admin_categories') }}" class="nav-link active">
+                        <i class="fas fa-tags"></i>
+                        Categories
+                    </a>
+                    <a href="#" class="nav-link">
+                        <i class="fas fa-star"></i>
+                        Reviews
+                    </a>
+                    <a href="#" class="nav-link">
+                        <i class="fas fa-chart-bar"></i>
+                        Analytics
+                    </a>
+                    <a href="#" class="nav-link">
+                        <i class="fas fa-cog"></i>
+                        Settings
+                    </a>
+                    <a href="{{ url_for('index') }}" class="nav-link">
+                        <i class="fas fa-home"></i>
+                        Back to Site
+                    </a>
+                </nav>
+            </div>
+        </div>
+
+        <!-- Admin Main Content -->
+        <div class="col-md-9 col-lg-10">
+            <div class="admin-main">
+                <!-- Admin Header -->
+                <div class="admin-header">
+                    <div>
+                        <h1>{{ title }}</h1>
+                        <p class="text-muted mb-0">
+                            {% if category %}
+                                Edit category information
+                            {% else %}
+                                Create a new product category
+                            {% endif %}
+                        </p>
+                    </div>
+                    <a href="{{ url_for('admin_categories') }}" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left me-2"></i>Back to Categories
+                    </a>
+                </div>
+
+                <!-- Category Form -->
+                <div class="category-form">
+                    <form method="POST">
+                        <div class="form-group">
+                            <label for="name" class="form-label">
+                                Category Name <span class="text-danger">*</span>
+                            </label>
+                            <input type="text" 
+                                   id="name" 
+                                   name="name" 
+                                   class="form-control" 
+                                   placeholder="Enter category name"
+                                   value="{{ category.name if category else '' }}"
+                                   required>
+                            <small class="help-text">
+                                Choose a descriptive name for your category (e.g., "Men's Clothing", "Electronics")
+                            </small>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="description" class="form-label">
+                                Description
+                            </label>
+                            <textarea id="description" 
+                                      name="description" 
+                                      class="form-control" 
+                                      rows="4" 
+                                      placeholder="Enter category description">{{ category.description if category else '' }}</textarea>
+                            <small class="help-text">
+                                Provide a brief description of what products belong to this category
+                            </small>
+                        </div>
+
+                        <!-- Category Information -->
+                        <div class="category-info">
+                            <h5><i class="fas fa-info-circle me-2"></i>Category Guidelines</h5>
+                            <ul class="small">
+                                <li>Use clear, descriptive names that customers will understand</li>
+                                <li>Keep category names concise (ideally under 30 characters)</li>
+                                <li>Group similar products together for better navigation</li>
+                                <li>Consider how categories will appear in your store's navigation</li>
+                                <li>You can add/edit categories anytime as your product catalog grows</li>
+                            </ul>
+                        </div>
+
+                        {% if category %}
+                        <!-- Category Statistics -->
+                        <div class="category-info">
+                            <h5><i class="fas fa-chart-bar me-2"></i>Category Statistics</h5>
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <strong>Products:</strong> {{ category.products|length }}
+                                </div>
+                                <div class="col-md-4">
+                                    <strong>Total Value:</strong> ৳{{ "%.0f"|format(category.products | sum(attribute='price') if category.products else 0) }}
+                                </div>
+                                <div class="col-md-4">
+                                    <strong>Created:</strong> {{ category.created_at.strftime('%d %b %Y') if category.created_at else 'N/A' }}
+                                </div>
+                            </div>
+                            {% if category.products %}
+                            <div class="mt-3">
+                                <strong>Recent products:</strong>
+                                <div class="mt-2">
+                                    {% for product in category.products[:5] %}
+                                    <span class="badge bg-light text-dark me-1">{{ product.name[:20] }}{% if product.name|length > 20 %}...{% endif %}</span>
+                                    {% endfor %}
+                                    {% if category.products|length > 5 %}
+                                    <span class="text-muted">+{{ category.products|length - 5 }} more</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            {% endif %}
+                        </div>
+                        {% endif %}
+
+                        <!-- Form Actions -->
+                        <div class="d-flex justify-content-between pt-3 border-top">
+                            <a href="{{ url_for('admin_categories') }}" class="btn btn-secondary">
+                                <i class="fas fa-times me-2"></i>Cancel
+                            </a>
+                            <div>
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-save me-2"></i>
+                                    {% if category %}
+                                        Update Category
+                                    {% else %}
+                                        Create Category
+                                    {% endif %}
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

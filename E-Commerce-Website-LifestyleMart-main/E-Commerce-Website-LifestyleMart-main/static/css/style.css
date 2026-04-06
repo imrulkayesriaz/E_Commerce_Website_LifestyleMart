@@ -1,0 +1,64 @@
+:root {
+    --primary-color: #FF6B35;
+    --secondary-color: #2C3E50;
+    --accent-color: #E67E22;
+    --light-gray: #F8F9FA;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: var(--light-gray);
+    padding-top: 120px;
+}
+
+.navbar {
+    background-color: white !important;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.navbar-brand {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 700;
+    color: var(--primary-color) !important;
+}
+
+.search-bar input {
+    border-radius: 25px;
+    border: 2px solid var(--primary-color);
+}
+
+.search-bar button {
+    background-color: var(--primary-color);
+    border-radius: 50%;
+}
+
+.cart-badge {
+    background-color: var(--danger-color);
+    color: white;
+    border-radius: 50%;
+    position: absolute;
+    top: -8px;
+    right: -8px;
+}
+
+.product-card {
+    transition: transform 0.3s ease;
+    border: none;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+}
+
+.product-card:hover {
+    transform: translateY(-5px);
+}
+
+.btn-warning {
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--accent-color) 100%);
+    border: none;
+}
+
+.hero-slide {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    height: 500px;
+    display: flex;
+    align-items: center;
+}

@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}LIFESTYLE MART - Bangladesh's Premier Online Shopping Destination{% endblock %}</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Montserrat:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    
+    <style>
+        :root {
+            --primary-color: #f57224;
+            --secondary-color: #232f3e;
+            --accent-color: #ff9900;
+            --text-dark: #212121;
+            --text-light: #757575;
+            --border-color: #e0e0e0;
+            --bg-light: #f5f5f5;
+            --success-color: #28a745;
+            --danger-color: #dc3545;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            color: var(--text-dark);
+            background-color: #f9f9f9;
+            margin: 0;
+            padding: 0;
+        }
+        
+        /* Daraz-style Header */
+        .top-header {
+            background: var(--secondary-color);
+            color: white;
+            padding: 6px 0;
+            font-size: 11px;
+        }
+        
+        .top-header a {
+            color: white;
+            text-decoration: none;
+            margin: 0 8px;
+            transition: color 0.3s;
+        }
+        
+        .top-header a:hover {
+            color: var(--primary-color);
+        }
+        
+        .main-header {
+            background: white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        
+        .logo {
+            font-size: 24px;
+            font-weight: 800;
+            color: var(--primary-color) !important;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            font-family: 'Montserrat', sans-serif;
+        }
+        
+        .logo i {
+            margin-right: 8px;
+            font-size: 26px;
+        }
+        
+        .logo:hover {
+            color: var(--accent-color) !important;
+        }
+        
+        .search-container {
+            flex: 1;
+            max-width: 550px;
+            margin: 0 20px;
+        }
+        
+        .search-box {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+        
+        .search-input {
+            width: 100%;
+            padding: 10px 45px 10px 15px;
+            border: 2px solid var(--border-color);
+            border-radius: 4px;
+            font-size: 13px;
+            transition: border-color 0.3s;
+        }
+        
+        .search-input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+        
+        .search-btn {
+            position: absolute;
+            right: 0;
+            top: 0;
+            bottom: 0;
+            background: var(--primary-color);
+            border: none;
+            color: white;
+            padding: 0 15px;
+            border-radius: 0 4px 4px 0;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        
+        .search-btn:hover {
+            background: var(--accent-color);
+        }
+        
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+        }
+        
+        .header-action {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-decoration: none;
+            color: var(--text-dark);
+            transition: color 0.3s;
+            position: relative;
+        }
+        
+        .header-action:hover {
+            color: var(--primary-color);
+        }
+        
+        .header-action i {
+            font-size: 18px;
+            margin-bottom: 3px;
+        }
+        
+        .header-action span {
+            font-size: 11px;
+            font-weight: 500;
+        }
+        
+        .cart-count {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: var(--danger-color);
+            color: white;
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            font-weight: bold;
+        }
+        
+        /* Navigation Menu */
+        .nav-menu {
+            background: var(--primary-color);
+            padding: 0;
+        }
+        
+        .nav-menu .nav-link {
+            color: white !important;
+            padding: 10px 16px;
+            font-weight: 500;
+            transition: background 0.3s;
+            border-radius: 0;
+            font-size: 13px;
+        }
+        
+        .nav-menu .nav-link:hover {
+            background: var(--accent-color);
+        }
+        
+        .category-dropdown {
+            position: relative;
+        }
+        
+        .category-menu {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            background: white;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            min-width: 200px;
+            display: none;
+            z-index: 1000;
+        }
+        
+        .category-dropdown:hover .category-menu {
+            display: block;
+        }
+        
+        .category-menu a {
+            display: block;
+            padding: 10px 20px;
+            color: var(--text-dark);
+            text-decoration: none;
+            transition: background 0.3s;
+        }
+        
+        .category-menu a:hover {
+            background: var(--bg-light);
+            color: var(--primary-color);
+        }
+        
+        /* Flash Messages */
+        .alert {
+            border-radius: 4px;
+            border: none;
+            margin: 10px 0;
+            animation: slideIn 0.3s ease;
+        }
+        
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* Main content adjustments */
+        main {
+            margin-top: 0;
+            padding-top: 0;
+        }
+        
+        .container {
+            padding-left: 15px;
+            padding-right: 15px;
+        }
+        
+        /* Footer */
+        footer {
+            background: var(--secondary-color);
+            color: white;
+            padding: 40px 0 20px;
+            margin-top: 60px;
+        }
+        
+        .footer-section h5 {
+            color: var(--primary-color);
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+        
+        .footer-section ul {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .footer-section ul li {
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .footer-section ul li a {
+            color: #ccc;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        
+        .footer-section ul li a:hover {
+            color: var(--primary-color);
+        }
+        
+        .social-links {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .social-links a {
+            width: 40px;
+            height: 40px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            transition: all 0.3s ease;
+        }
+        
+        .social-links a:hover {
+            background: var(--primary-color);
+            transform: translateY(-3px);
+        }
+        
+        .payment-methods {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .payment-methods i {
+            font-size: 2rem;
+            color: #ccc;
+            transition: color 0.3s ease;
+        }
+        
+        .payment-methods i:hover {
+            color: var(--primary-color);
+        }
+        
+        .app-download {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .app-download a {
+            display: flex;
+            align-items: center;
+            background: #000;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 4px;
+            text-decoration: none;
+            font-size: 12px;
+            transition: transform 0.3s;
+        }
+        
+        .app-download a:hover {
+            transform: translateY(-2px);
+        }
+        
+        .app-download i {
+            margin-right: 8px;
+            font-size: 20px;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .search-container {
+                margin: 15px 0;
+            }
+            
+            .header-actions {
+                gap: 15px;
+            }
+            
+            .header-action span {
+                display: none;
+            }
+            
+            body {
+                padding-top: 150px;
+            }
+        }
+    </style>
+    
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <!-- Top Header -->
+    <div class="top-header">
+        <div class="container">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <span>🏳️ Welcome to Lifestyle Mart Bangladesh!</span>
+                    {% if current_user.is_authenticated and current_user.role != 'seller' %}
+                        <a href="{{ url_for('become_seller') }}" class="ms-3 text-warning fw-bold"><i class="fas fa-store me-1"></i> Sell on Lifestyle Mart</a>
+                    {% endif %}
+                </div>
+                <div>
+                    <a href="#"><i class="fas fa-phone"></i> 16263</a>
+                    <a href="#"><i class="fas fa-envelope"></i> support@lifestylemart.bd</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Header -->
+    <header class="main-header">
+        <div class="container py-2">
+            <div class="d-flex align-items-center">
+                <!-- Logo -->
+                <a href="{{ url_for('index') }}" class="logo">
+                    <i class="fas fa-shopping-bag"></i>
+                    LIFESTYLE MART
+                </a>
+
+                <!-- Search Bar -->
+                <div class="search-container">
+                    <form action="{{ url_for('shop') }}" method="GET" class="search-box">
+                        <input type="text" name="search" class="search-input" placeholder="Search for products, brands, categories...">
+                        <button type="submit" class="search-btn" aria-label="Search">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Header Actions -->
+                <div class="header-actions d-flex align-items-center gap-4">
+                    <a href="{{ url_for('track_order') }}" class="text-white text-decoration-none">
+                        <i class="fas fa-shipping-fast"></i>
+                        <span class="d-none d-md-inline">Track Order</span>
+                    </a>
+                    {% if current_user.is_authenticated %}
+                        <a href="{{ url_for('inbox') }}" class="header-action position-relative">
+                            <i class="fas fa-envelope"></i>
+                            <span>Inbox</span>
+                            {% if unread_messages_count > 0 %}
+                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size: 0.6rem;">
+                                {{ unread_messages_count }}
+                            </span>
+                            {% endif %}
+                        </a>
+                        {% if current_user.role == 'seller' or current_user.role == 'admin' %}
+                        <a href="{{ url_for('seller_dashboard') }}" class="header-action text-primary">
+                            <i class="fas fa-store"></i>
+                            <span>Seller Center</span>
+                        </a>
+                        {% endif %}
+                        <a href="{{ url_for('profile') }}" class="header-action">
+                            <i class="fas fa-user"></i>
+                            <span>{{ current_user.name.split()[0] }}</span>
+                        </a>
+                        <a href="{{ url_for('logout') }}" class="header-action">
+                            <i class="fas fa-sign-out-alt"></i>
+                            <span>Logout</span>
+                        </a>
+                    {% else %}
+                        <a href="{{ url_for('login') }}" class="header-action">
+                            <i class="fas fa-user"></i>
+                            <span>Login</span>
+                        </a>
+                        <a href="{{ url_for('signup') }}" class="header-action">
+                            <i class="fas fa-user-plus"></i>
+                            <span>Register</span>
+                        </a>
+                    {% endif %}
+                    <a href="{{ url_for('cart') }}" class="header-action">
+                        <i class="fas fa-shopping-cart"></i>
+                        <span>Cart</span>
+                        <span class="cart-count">0</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Navigation Menu -->
+    <nav class="nav-menu">
+        <div class="container">
+            <ul class="nav">
+                <li class="nav-item category-dropdown">
+                    <a class="nav-link" href="#">
+                        <i class="fas fa-bars me-2"></i> All Categories
+                    </a>
+                    <div class="category-menu">
+                        <a href="{{ url_for('shop', category='mens-clothing') }}">Men's Fashion</a>
+                        <a href="{{ url_for('shop', category='womens-clothing') }}">Women's Fashion</a>
+                        <a href="{{ url_for('shop', category='shoes') }}">Shoes</a>
+                        <a href="{{ url_for('shop', category='accessories') }}">Accessories</a>
+                        <a href="{{ url_for('shop', category='beauty') }}">Beauty & Personal Care</a>
+                        <a href="{{ url_for('shop', category='home') }}">Home & Living</a>
+                    </div>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('shop') }}"><i class="fas fa-fire me-2"></i> Flash Deals</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#"><i class="fas fa-percentage me-2"></i> Offers</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#"><i class="fas fa-truck me-2"></i> Express Delivery</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#"><i class="fas fa-star me-2"></i> BD Brands</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#"><i class="fas fa-gift me-2"></i> Gift Cards</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div class="container mt-2">
+                {% for category, message in messages %}
+                    {% set alert_class = 'info' %}
+                    {% if category == 'success' %}{% set alert_class = 'success' %}
+                    {% elif category == 'danger' or category == 'error' %}{% set alert_class = 'danger' %}
+                    {% elif category == 'warning' %}{% set alert_class = 'warning' %}
+                    {% endif %}
+                    <div class="alert alert-{{ alert_class }} alert-dismissible fade show d-flex align-items-center" role="alert">
+                        <i class="fas fa-{% if alert_class == 'success' %}check-circle{% elif alert_class == 'danger' %}times-circle{% elif alert_class == 'warning' %}exclamation-triangle{% else %}info-circle{% endif %} me-2"></i>
+                        {{ message }}
+                        <button type="button" class="btn-close ms-auto" data-bs-dismiss="alert"></button>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+
+    <!-- Main Content -->
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="row">
+                <!-- Company Info -->
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="footer-section">
+                        <h5><i class="fas fa-shopping-bag me-2"></i>LIFESTYLE MART</h5>
+                        <p>Bangladesh's premier online shopping destination. We bring you the best local and international brands with fast delivery nationwide.</p>
+                        
+                        <!-- Social Media -->
+                        <div class="social-links mb-3">
+                            <a href="#" title="Facebook"><i class="fab fa-facebook-f"></i></a>
+                            <a href="#" title="Instagram"><i class="fab fa-instagram"></i></a>
+                            <a href="#" title="Twitter"><i class="fab fa-twitter"></i></a>
+                            <a href="#" title="YouTube"><i class="fab fa-youtube"></i></a>
+                            <a href="#" title="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+                        </div>
+                        
+                        <!-- App Download -->
+                        <div class="app-download">
+                            <a href="#" title="Download on App Store">
+                                <i class="fab fa-apple"></i>
+                                <span>App Store</span>
+                            </a>
+                            <a href="#" title="Get it on Google Play">
+                                <i class="fab fa-google-play"></i>
+                                <span>Google Play</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Quick Links -->
+                <div class="col-lg-2 col-md-6 mb-4">
+                    <div class="footer-section">
+                        <h5>Quick Links</h5>
+                        <ul>
+                            <li><a href="{{ url_for('index') }}">Home</a></li>
+                            <li><a href="{{ url_for('shop') }}">Shop</a></li>
+                            <li><a href="#">About Us</a></li>
+                            <li><a href="#">Contact</a></li>
+                            <li><a href="#">Blog</a></li>
+                            <li><a href="#">Careers</a></li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <!-- Customer Service -->
+                <div class="col-lg-2 col-md-6 mb-4">
+                    <div class="footer-section">
+                        <h5>Customer Service</h5>
+                        <ul>
+                            <li><a href="#">FAQ</a></li>
+                            <li><a href="#">Shipping Info</a></li>
+                            <li><a href="#">Returns & Refunds</a></li>
+                            <li><a href="#">Track Order</a></li>
+                            <li><a href="#">Size Guide</a></li>
+                            <li><a href="#">Warranty</a></li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <!-- Contact & Payment -->
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="footer-section">
+                        <h5>Contact Us</h5>
+                        <ul>
+                            <li><i class="fas fa-map-marker-alt me-2"></i> 123 Fashion Street, Dhanmondi, Dhaka-1205</li>
+                            <li><i class="fas fa-phone me-2"></i> Hotline: 16263</li>
+                            <li><i class="fas fa-envelope me-2"></i> support@lifestylemart.bd</li>
+                            <li><i class="fas fa-clock me-2"></i> Sat-Thu: 10AM - 10PM</li>
+                        </ul>
+                        
+                        <!-- Payment Methods -->
+                        <h6 class="mt-4 mb-3">We Accept</h6>
+                        <div class="payment-methods">
+                            <i class="fab fa-cc-visa" title="Visa"></i>
+                            <i class="fab fa-cc-mastercard" title="Mastercard"></i>
+                            <i class="fab fa-cc-amex" title="American Express"></i>
+                            <i class="fab fa-cc-paypal" title="PayPal"></i>
+                            <i class="fas fa-mobile-alt" title="bKash"></i>
+                            <i class="fas fa-university" title="Bank Transfer"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Bottom Footer -->
+            <hr class="bg-white-50 my-4">
+            
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <p class="mb-0">&copy; 2026 LIFESTYLE MART. All Rights Reserved.</p>
+                </div>
+                <div class="col-md-6 text-end">
+                    <a href="#" class="text-white-50 text-decoration-none me-3">Privacy Policy</a>
+                    <a href="#" class="text-white-50 text-decoration-none me-3">Terms & Conditions</a>
+                    <a href="#" class="text-white-50 text-decoration-none">Cookie Policy</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Back to Top Button -->
+    <button id="backToTop" class="btn btn-warning rounded-circle position-fixed" 
+            style="bottom: 100px; right: 30px; width: 46px; height: 46px; display: none; z-index: 1001; box-shadow: 0 4px 12px rgba(0,0,0,0.2);">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Main JS (AJAX Cart, Cart Count, UI) -->
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    
+    <!-- AI Assistant Widget -->
+    {% include 'assistant_widget.html' %}
+    
+    <!-- AI Assistant JavaScript -->
+    <script src="{{ url_for('static', filename='js/assistant.js') }}"></script>
+    
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

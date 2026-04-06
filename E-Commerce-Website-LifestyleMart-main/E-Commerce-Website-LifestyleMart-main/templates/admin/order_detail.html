@@ -1,0 +1,369 @@
+{% extends "base.html" %}
+
+{% block title %}Order #{{ order.order_number }} - Admin | LIFESTYLE MART{% endblock %}
+
+{% block content %}
+<style>
+.order-detail-container {
+    padding: 30px 0;
+    background: #f5f5f5;
+    min-height: calc(100vh - 200px);
+}
+
+.admin-card {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    margin-bottom: 20px;
+    overflow: hidden;
+}
+
+.admin-card-header {
+    background: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%);
+    color: white;
+    padding: 20px;
+}
+
+.admin-card-header h4 {
+    margin: 0;
+    font-weight: 700;
+}
+
+.admin-card-body {
+    padding: 20px;
+}
+
+.order-info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+}
+
+.info-item {
+    padding: 15px;
+    background: #f8f9fa;
+    border-radius: 6px;
+}
+
+.info-label {
+    font-size: 0.75rem;
+    color: #6c757d;
+    text-transform: uppercase;
+    margin-bottom: 5px;
+}
+
+.info-value {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #333;
+}
+
+.status-badge {
+    display: inline-block;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.status-pending { background: #fff3cd; color: #856404; }
+.status-processing { background: #cce5ff; color: #004085; }
+.status-shipped { background: #d4edda; color: #155724; }
+.status-delivered { background: #d1ecf1; color: #0c5460; }
+.status-cancelled { background: #f8d7da; color: #721c24; }
+
+.product-table {
+    width: 100%;
+}
+
+.product-table th,
+.product-table td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.product-table th {
+    background: #f8f9fa;
+    font-weight: 600;
+    font-size: 0.875rem;
+}
+
+.product-img {
+    width: 50px;
+    height: 50px;
+    object-fit: cover;
+    border-radius: 4px;
+}
+
+.total-row {
+    background: #fff5f0;
+    font-weight: 700;
+    font-size: 1.125rem;
+}
+
+.admin-btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.admin-btn-primary {
+    background: #ff6b35;
+    color: white;
+}
+
+.admin-btn-primary:hover {
+    background: #e55a2b;
+}
+
+.admin-btn-secondary {
+    background: #6c757d;
+    color: white;
+}
+
+.admin-btn-secondary:hover {
+    background: #5a6268;
+}
+
+.form-select {
+    padding: 8px 12px;
+    border: 1px solid #e9ecef;
+    border-radius: 4px;
+}
+
+.tracking-box {
+    background: #e8f4f8;
+    border-left: 4px solid #17a2b8;
+    padding: 15px;
+    margin: 15px 0;
+    border-radius: 4px;
+}
+
+.timeline {
+    position: relative;
+    padding-left: 30px;
+}
+
+.timeline::before {
+    content: '';
+    position: absolute;
+    left: 10px;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: #e9ecef;
+}
+
+.timeline-item {
+    position: relative;
+    padding-bottom: 20px;
+}
+
+.timeline-item::before {
+    content: '';
+    position: absolute;
+    left: -24px;
+    top: 5px;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #ff6b35;
+}
+
+.timeline-date {
+    font-size: 0.75rem;
+    color: #6c757d;
+}
+
+.timeline-content {
+    font-weight: 600;
+}
+</style>
+
+<div class="order-detail-container">
+    <div class="container">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h3>Order #{{ order.order_number }}</h3>
+            <div>
+                <a href="{{ url_for('admin_orders') }}" class="admin-btn admin-btn-secondary me-2">
+                    <i class="fas fa-arrow-left me-2"></i>Back to Orders
+                </a>
+                <a href="{{ url_for('admin_order_tracking', id=order.id) }}" class="admin-btn admin-btn-primary">
+                    <i class="fas fa-shipping-fast me-2"></i>Update Tracking
+                </a>
+            </div>
+        </div>
+
+        <!-- Order Status & Actions -->
+        <div class="admin-card">
+            <div class="admin-card-header">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h4><i class="fas fa-info-circle me-2"></i>Order Status</h4>
+                    <span class="status-badge status-{{ order.status.lower() }}">{{ order.status.title() }}</span>
+                </div>
+            </div>
+            <div class="admin-card-body">
+                <form action="{{ url_for('admin_update_order_status', id=order.id) }}" method="POST" class="d-flex align-items-center gap-3">
+                    <label class="fw-semibold">Update Status:</label>
+                    <select name="status" class="form-select" style="width: auto;">
+                        <option value="pending" {% if order.status == 'pending' %}selected{% endif %}>Pending</option>
+                        <option value="processing" {% if order.status == 'processing' %}selected{% endif %}>Processing</option>
+                        <option value="shipped" {% if order.status == 'shipped' %}selected{% endif %}>Shipped</option>
+                        <option value="delivered" {% if order.status == 'delivered' %}selected{% endif %}>Delivered</option>
+                        <option value="cancelled" {% if order.status == 'cancelled' %}selected{% endif %}>Cancelled</option>
+                    </select>
+                    <button type="submit" class="admin-btn admin-btn-primary">
+                        <i class="fas fa-save me-2"></i>Update Status
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Order Information -->
+        <div class="row">
+            <div class="col-md-6">
+                <div class="admin-card">
+                    <div class="admin-card-header">
+                        <h4><i class="fas fa-user me-2"></i>Customer Information</h4>
+                    </div>
+                    <div class="admin-card-body">
+                        <div class="order-info-grid">
+                            <div class="info-item">
+                                <div class="info-label">Name</div>
+                                <div class="info-value">{{ order.user.name }}</div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-label">Email</div>
+                                <div class="info-value">{{ order.user.email }}</div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-label">Phone</div>
+                                <div class="info-value">{{ order.user.phone or 'N/A' }}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="admin-card">
+                    <div class="admin-card-header">
+                        <h4><i class="fas fa-calendar me-2"></i>Order Details</h4>
+                    </div>
+                    <div class="admin-card-body">
+                        <div class="order-info-grid">
+                            <div class="info-item">
+                                <div class="info-label">Order Date</div>
+                                <div class="info-value">{{ order.created_at.strftime('%d %b %Y, %I:%M %p') }}</div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-label">Payment Method</div>
+                                <div class="info-value">{{ order.payment_method.upper() }}</div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-label">Payment Status</div>
+                                <div class="info-value">{{ order.payment_status.title() }}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Shipping Information -->
+        <div class="admin-card">
+            <div class="admin-card-header">
+                <h4><i class="fas fa-shipping-fast me-2"></i>Shipping Information</h4>
+            </div>
+            <div class="admin-card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6 class="fw-bold mb-3">Shipping Address</h6>
+                        <p>{{ order.shipping_address }}</p>
+                    </div>
+                    <div class="col-md-6">
+                        <h6 class="fw-bold mb-3">Delivery Information</h6>
+                        <p><strong>Type:</strong> {{ order.delivery_type.title() }}</p>
+                        {% if order.tracking_number %}
+                        <div class="tracking-box">
+                            <p class="mb-1"><strong>Tracking Number:</strong> {{ order.tracking_number }}</p>
+                            <p class="mb-1"><strong>Courier:</strong> {{ order.courier_name.title() }}</p>
+                            {% if order.estimated_delivery %}
+                            <p class="mb-0"><strong>Estimated Delivery:</strong> {{ order.estimated_delivery.strftime('%d %b %Y') }}</p>
+                            {% endif %}
+                        </div>
+                        {% else %}
+                        <p class="text-muted">No tracking information added yet.</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Order Items -->
+        <div class="admin-card">
+            <div class="admin-card-header">
+                <h4><i class="fas fa-box me-2"></i>Order Items</h4>
+            </div>
+            <div class="admin-card-body">
+                <table class="product-table">
+                    <thead>
+                        <tr>
+                            <th>Product</th>
+                            <th>Price</th>
+                            <th>Quantity</th>
+                            <th>Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in order.order_items %}
+                        <tr>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <img src="{{ item.product.image or 'https://via.placeholder.com/50' }}" alt="{{ item.product.name }}" class="product-img me-3">
+                                    <span>{{ item.product.name }}</span>
+                                </div>
+                            </td>
+                            <td>৳{{ "%.2f"|format(item.price) }}</td>
+                            <td>{{ item.quantity }}</td>
+                            <td>৳{{ "%.2f"|format(item.total) }}</td>
+                        </tr>
+                        {% endfor %}
+                        <tr class="total-row">
+                            <td colspan="3" class="text-end">Order Total:</td>
+                            <td>৳{{ "%.2f"|format(order.total_amount) }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        {% if order.order_review %}
+        <!-- Order Review -->
+        <div class="admin-card">
+            <div class="admin-card-header">
+                <h4><i class="fas fa-star me-2"></i>Customer Review</h4>
+            </div>
+            <div class="admin-card-body">
+                <div class="d-flex align-items-center mb-3">
+                    <span class="stars me-2">
+                        {% for i in range(5) %}
+                            {% if i < order.order_rating %}
+                            <i class="fas fa-star text-warning"></i>
+                            {% else %}
+                            <i class="far fa-star text-muted"></i>
+                            {% endif %}
+                        {% endfor %}
+                    </span>
+                    <span class="fw-bold">{{ order.order_rating }} Stars</span>
+                </div>
+                <p>{{ order.order_review }}</p>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

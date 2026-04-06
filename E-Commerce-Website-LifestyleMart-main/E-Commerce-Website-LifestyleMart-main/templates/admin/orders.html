@@ -1,0 +1,488 @@
+{% extends "base.html" %}
+
+{% block title %}Orders - Admin Panel{% endblock %}
+
+{% block content %}
+<style>
+.admin-container {
+    background: #f8f9fa;
+    min-height: 100vh;
+}
+
+.admin-sidebar {
+    background: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%);
+    min-height: 100vh;
+    box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+}
+
+.admin-sidebar .nav-link {
+    color: rgba(255,255,255,0.9);
+    padding: 15px 20px;
+    border-radius: 8px;
+    margin: 5px 10px;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.admin-sidebar .nav-link:hover,
+.admin-sidebar .nav-link.active {
+    background: rgba(255,255,255,0.2);
+    color: white;
+    transform: translateX(5px);
+}
+
+.admin-main {
+    padding: 30px;
+}
+
+.admin-header {
+    background: white;
+    border-radius: 12px;
+    padding: 20px 30px;
+    margin-bottom: 30px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.orders-table {
+    background: white;
+    border-radius: 12px;
+    padding: 25px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+}
+
+.order-status {
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.order-status.pending {
+    background: #fff3cd;
+    color: #856404;
+}
+
+.order-status.processing {
+    background: #cce5ff;
+    color: #004085;
+}
+
+.order-status.shipped {
+    background: #d4edda;
+    color: #155724;
+}
+
+.order-status.delivered {
+    background: #d1ecf1;
+    color: #0c5460;
+}
+
+.order-status.cancelled {
+    background: #f8d7da;
+    color: #721c24;
+}
+
+.payment-status {
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+.payment-status.paid {
+    background: #d4edda;
+    color: #155724;
+}
+
+.payment-status.pending {
+    background: #fff3cd;
+    color: #856404;
+}
+
+.payment-status.failed {
+    background: #f8d7da;
+    color: #721c24;
+}
+
+.filter-buttons {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.filter-btn {
+    padding: 8px 16px;
+    border: 2px solid #e9ecef;
+    background: white;
+    border-radius: 20px;
+    font-size: 0.875rem;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    color: var(--text-dark);
+}
+
+.filter-btn:hover,
+.filter-btn.active {
+    border-color: var(--primary-color);
+    background: var(--primary-color);
+    color: white;
+    text-decoration: none;
+}
+
+.table-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.pagination {
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.order-summary {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.customer-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.customer-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: var(--primary-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: 700;
+    font-size: 0.875rem;
+}
+</style>
+
+<div class="admin-container">
+    <div class="row g-0">
+        <!-- Admin Sidebar -->
+        <div class="col-md-3 col-lg-2">
+            <div class="admin-sidebar p-3">
+                <div class="text-center mb-4">
+                    <h4 class="text-white">Admin Panel</h4>
+                    <small class="text-white-50">LIFESTYLE MART</small>
+                </div>
+                
+                <nav class="nav flex-column">
+                    <a href="{{ url_for('admin_dashboard') }}" class="nav-link">
+                        <i class="fas fa-tachometer-alt"></i>
+                        Dashboard
+                    </a>
+                    <a href="#" class="nav-link">
+                        <i class="fas fa-box"></i>
+                        Products
+                    </a>
+                    <a href="{{ url_for('admin_orders') }}" class="nav-link active">
+                        <i class="fas fa-shopping-cart"></i>
+                        Orders
+                    </a>
+                    <a href="#" class="nav-link">
+                        <i class="fas fa-users"></i>
+                        Users
+                    </a>
+                    <a href="#" class="nav-link">
+                        <i class="fas fa-tags"></i>
+                        Categories
+                    </a>
+                    <a href="#" class="nav-link">
+                        <i class="fas fa-star"></i>
+                        Reviews
+                    </a>
+                    <a href="#" class="nav-link">
+                        <i class="fas fa-chart-bar"></i>
+                        Analytics
+                    </a>
+                    <a href="#" class="nav-link">
+                        <i class="fas fa-cog"></i>
+                        Settings
+                    </a>
+                    <a href="{{ url_for('index') }}" class="nav-link">
+                        <i class="fas fa-home"></i>
+                        Back to Site
+                    </a>
+                </nav>
+            </div>
+        </div>
+
+        <!-- Admin Main Content -->
+        <div class="col-md-9 col-lg-10">
+            <div class="admin-main">
+                <!-- Admin Header -->
+                <div class="admin-header">
+                    <div>
+                        <h1>Orders Management</h1>
+                        <p class="text-muted mb-0">Manage customer orders and fulfillment</p>
+                    </div>
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="text-end">
+                            <small class="text-muted">Total Orders</small>
+                            <div class="fw-bold">{{ orders.total }}</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Filter Buttons -->
+                <div class="filter-buttons mb-4">
+                    <a href="{{ url_for('admin_orders') }}" class="filter-btn {{ 'active' if not status }}">
+                        All Orders
+                    </a>
+                    <a href="{{ url_for('admin_orders', status='pending') }}" class="filter-btn {{ 'active' if status == 'pending' }}">
+                        Pending
+                    </a>
+                    <a href="{{ url_for('admin_orders', status='processing') }}" class="filter-btn {{ 'active' if status == 'processing' }}">
+                        Processing
+                    </a>
+                    <a href="{{ url_for('admin_orders', status='shipped') }}" class="filter-btn {{ 'active' if status == 'shipped' }}">
+                        Shipped
+                    </a>
+                    <a href="{{ url_for('admin_orders', status='delivered') }}" class="filter-btn {{ 'active' if status == 'delivered' }}">
+                        Delivered
+                    </a>
+                    <a href="{{ url_for('admin_orders', status='cancelled') }}" class="filter-btn {{ 'active' if status == 'cancelled' }}">
+                        Cancelled
+                    </a>
+                </div>
+
+                <!-- Orders Table -->
+                <div class="orders-table">
+                    {% if orders.items %}
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Order #</th>
+                                    <th>Customer</th>
+                                    <th>Date</th>
+                                    <th>Items</th>
+                                    <th>Total</th>
+                                    <th>Payment</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for order in orders.items %}
+                                <tr>
+                                    <td>
+                                        <div class="order-summary">
+                                            <strong>{{ order.order_number }}</strong>
+                                            {% if order.is_featured %}
+                                                <i class="fas fa-star text-warning" title="Featured Order"></i>
+                                            {% endif %}
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="customer-info">
+                                            <div class="customer-avatar">
+                                                {{ order.user.name[0].upper() if order.user else 'U' }}
+                                            </div>
+                                            <div>
+                                                <div class="fw-bold">{{ order.user.name if order.user else 'Unknown User' }}</div>
+                                                <small class="text-muted">{{ order.user.email if order.user else 'No email' }}</small>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div>
+                                            <div>{{ order.created_at.strftime('%d %b %Y') }}</div>
+                                            <small class="text-muted">{{ order.created_at.strftime('%I:%M %p') }}</small>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-secondary">{{ order.order_items|length }} items</span>
+                                    </td>
+                                    <td>
+                                        <strong>৳{{ "%.2f"|format(order.total_amount) }}</strong>
+                                    </td>
+                                    <td>
+                                        <span class="payment-status {{ order.payment_status or 'pending' }}">
+                                            {{ order.payment_status or 'pending' }}
+                                        </span>
+                                        <br>
+                                        <small class="text-muted">{{ order.payment_method or 'N/A' }}</small>
+                                    </td>
+                                    <td>
+                                        <span class="order-status {{ order.status or 'pending' }}">
+                                            {{ order.status or 'pending' }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <div class="table-actions">
+                                            <a href="{{ url_for('admin_order_detail', id=order.id) }}" 
+                                               class="btn btn-sm btn-outline-primary" title="View Order">
+                                                <i class="fas fa-eye"></i>
+                                            </a>
+                                            {% if order.status != 'delivered' and order.status != 'cancelled' %}
+                                            <button class="btn btn-sm btn-outline-success" 
+                                                    onclick="quickUpdateStatus({{ order.id }})" 
+                                                    title="Quick Update">
+                                                <i class="fas fa-sync"></i>
+                                            </button>
+                                            {% endif %}
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Pagination -->
+                    {% if orders.pages > 1 %}
+                    <nav aria-label="Orders pagination">
+                        <ul class="pagination">
+                            {% if orders.has_prev %}
+                                <li class="page-item">
+                                    <a class="page-link" href="{{ url_for('admin_orders', page=orders.prev_num, status=status) }}">
+                                        Previous
+                                    </a>
+                                </li>
+                            {% endif %}
+                            
+                            {% for page_num in orders.iter_pages() %}
+                                {% if page_num %}
+                                    {% if page_num != orders.page %}
+                                        <li class="page-item">
+                                            <a class="page-link" href="{{ url_for('admin_orders', page=page_num, status=status) }}">
+                                                {{ page_num }}
+                                            </a>
+                                        </li>
+                                    {% else %}
+                                        <li class="page-item active">
+                                            <span class="page-link">{{ page_num }}</span>
+                                        </li>
+                                    {% endif %}
+                                {% else %}
+                                    <li class="page-item disabled">
+                                        <span class="page-link">...</span>
+                                    </li>
+                                {% endif %}
+                            {% endfor %}
+                            
+                            {% if orders.has_next %}
+                                <li class="page-item">
+                                    <a class="page-link" href="{{ url_for('admin_orders', page=orders.next_num, status=status) }}">
+                                        Next
+                                    </a>
+                                </li>
+                            {% endif %}
+                        </ul>
+                    </nav>
+                    {% endif %}
+                    {% else %}
+                    <div class="text-center py-5">
+                        <i class="fas fa-shopping-cart fa-3x text-muted mb-3"></i>
+                        <h5>No orders found</h5>
+                        <p class="text-muted">
+                            {% if status %}
+                                No orders with status "{{ status }}" found.
+                            {% else %}
+                                No orders in the system yet.
+                            {% endif %}
+                        </p>
+                        <a href="{{ url_for('index') }}" class="btn btn-primary">
+                            <i class="fas fa-store me-2"></i>Visit Store
+                        </a>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function quickUpdateStatus(orderId) {
+    const statusOptions = ['pending', 'processing', 'shipped', 'delivered', 'cancelled'];
+    const statusLabels = {
+        'pending': 'Pending',
+        'processing': 'Processing',
+        'shipped': 'Shipped',
+        'delivered': 'Delivered',
+        'cancelled': 'Cancelled'
+    };
+    
+    let statusHtml = '<div class="mb-3"><label class="form-label">Select New Status:</label><select class="form-select" id="newStatus">';
+    
+    statusOptions.forEach(status => {
+        statusHtml += `<option value="${status}">${statusLabels[status]}</option>`;
+    });
+    
+    statusHtml += '</select></div>';
+    
+    // Create modal
+    const modal = document.createElement('div');
+    modal.innerHTML = `
+        <div class="modal fade" id="quickUpdateModal" tabindex="-1">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Quick Status Update</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        ${statusHtml}
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="button" class="btn btn-primary" onclick="submitStatusUpdate(${orderId})">Update Status</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    document.body.appendChild(modal);
+    
+    // Show modal (using Bootstrap if available, otherwise simple implementation)
+    const modalElement = modal.querySelector('.modal');
+    modalElement.style.display = 'block';
+    modalElement.classList.add('show');
+    
+    // Handle close
+    modalElement.querySelector('.btn-close').addEventListener('click', () => {
+        modal.remove();
+    });
+    
+    modalElement.querySelector('.btn-secondary').addEventListener('click', () => {
+        modal.remove();
+    });
+}
+
+function submitStatusUpdate(orderId) {
+    const newStatus = document.getElementById('newStatus').value;
+    
+    // Create form and submit
+    const form = document.createElement('form');
+    form.method = 'POST';
+    form.action = `/admin/orders/update_status/${orderId}`;
+    
+    const statusInput = document.createElement('input');
+    statusInput.type = 'hidden';
+    statusInput.name = 'status';
+    statusInput.value = newStatus;
+    
+    form.appendChild(statusInput);
+    document.body.appendChild(form);
+    form.submit();
+}
+</script>
+{% endblock %}

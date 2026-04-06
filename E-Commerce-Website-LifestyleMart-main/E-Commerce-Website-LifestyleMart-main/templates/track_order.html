@@ -1,0 +1,392 @@
+{% extends "base.html" %}
+
+{% block title %}Track Order - LIFESTYLE MART{% endblock %}
+
+{% block content %}
+<style>
+.tracking-container {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+    padding: 30px;
+    margin-top: 30px;
+}
+
+.tracking-header {
+    background: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%);
+    color: white;
+    padding: 25px;
+    border-radius: 12px 12px 0 0;
+    margin: -30px -30px 30px -30px;
+    text-align: center;
+}
+
+.tracking-form {
+    max-width: 600px;
+    margin: 0 auto 30px;
+}
+
+.tracking-timeline {
+    position: relative;
+    padding-left: 40px;
+}
+
+.tracking-timeline::before {
+    content: '';
+    position: absolute;
+    left: 15px;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: #e9ecef;
+}
+
+.timeline-item {
+    position: relative;
+    margin-bottom: 30px;
+}
+
+.timeline-item::before {
+    content: '';
+    position: absolute;
+    left: -25px;
+    top: 5px;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: #e9ecef;
+    border: 2px solid white;
+}
+
+.timeline-item.completed::before {
+    background: #28a745;
+}
+
+.timeline-item.current::before {
+    background: #ffc107;
+    animation: pulse 2s infinite;
+}
+
+.timeline-item.pending::before {
+    background: #6c757d;
+}
+
+.timeline-content {
+    background: #f8f9fa;
+    padding: 15px;
+    border-radius: 8px;
+    border-left: 3px solid #e9ecef;
+}
+
+.timeline-item.completed .timeline-content {
+    border-left-color: #28a745;
+}
+
+.timeline-item.current .timeline-content {
+    border-left-color: #ffc107;
+}
+
+.timeline-item.pending .timeline-content {
+    border-left-color: #6c757d;
+}
+
+.order-info-card {
+    background: #f8f9fa;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+.courier-info {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 15px;
+    background: white;
+    border-radius: 8px;
+    border: 1px solid #e9ecef;
+}
+
+.courier-logo {
+    width: 60px;
+    height: 60px;
+    background: var(--primary-color);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: 700;
+    font-size: 1.2rem;
+}
+
+@keyframes pulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(255, 193, 7, 0.7);
+    }
+    70% {
+        box-shadow: 0 0 0 10px rgba(255, 193, 7, 0);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(255, 193, 7, 0);
+    }
+}
+
+.no-tracking {
+    text-align: center;
+    padding: 60px 20px;
+}
+
+.no-tracking i {
+    font-size: 4rem;
+    color: #6c757d;
+    margin-bottom: 20px;
+}
+
+.tracking-number-display {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--primary-color);
+    font-family: 'Courier New', monospace;
+    letter-spacing: 2px;
+}
+
+.delivery-estimate {
+    background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+    color: white;
+    padding: 15px;
+    border-radius: 8px;
+    text-align: center;
+    margin-bottom: 20px;
+}
+</style>
+
+<div class="container">
+    <div class="tracking-container">
+        <div class="tracking-header">
+            <h2><i class="fas fa-shipping-fast me-3"></i>Order Tracking</h2>
+            <p class="mb-0">Track your order delivery status in real-time</p>
+        </div>
+
+        <!-- Tracking Form -->
+        <div class="tracking-form">
+            <form method="GET" action="{{ url_for('track_order') }}">
+                <div class="input-group input-group-lg">
+                    <input type="text" 
+                           class="form-control" 
+                           name="tracking_number" 
+                           placeholder="Enter your tracking number..." 
+                           value="{{ tracking_number or '' }}"
+                           required>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-search me-2"></i>Track Order
+                    </button>
+                </div>
+            </form>
+            <div class="text-center mt-3">
+                <small class="text-muted">
+                    You can find your tracking number in your order confirmation email or in your order history.
+                </small>
+            </div>
+        </div>
+
+        {% if order %}
+        <!-- Order Found -->
+        <div class="order-info-card">
+            <div class="row">
+                <div class="col-md-6">
+                    <h5>Order Information</h5>
+                    <p><strong>Order Number:</strong> {{ order.order_number }}</p>
+                    <p><strong>Order Date:</strong> {{ order.created_at.strftime('%d %B %Y') }}</p>
+                    <p><strong>Total Amount:</strong> ৳{{ "%.2f"|format(order.total_amount) }}</p>
+                    <p><strong>Delivery Type:</strong> 
+                        <span class="badge bg-{{ 'warning' if order.delivery_type == 'express' else 'info' }}">
+                            {{ order.delivery_type.title() }}
+                        </span>
+                    </p>
+                </div>
+                <div class="col-md-6">
+                    <h5>Delivery Address</h5>
+                    <p>{{ order.shipping_address }}</p>
+                    {% if order.estimated_delivery %}
+                    <div class="delivery-estimate">
+                        <i class="fas fa-calendar-check me-2"></i>
+                        <strong>Estimated Delivery:</strong><br>
+                        {{ order.estimated_delivery.strftime('%d %B %Y') }}
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        {% if order.tracking_number %}
+        <!-- Courier Information -->
+        <div class="courier-info">
+            <div class="courier-logo">
+                {{ order.courier_name[:2].upper() if order.courier_name else 'DL' }}
+            </div>
+            <div class="flex-grow-1">
+                <h6 class="mb-1">{{ order.courier_name or 'Delivery Service' }}</h6>
+                <p class="mb-0"><strong>Tracking Number:</strong></p>
+                <div class="tracking-number-display">{{ order.tracking_number }}</div>
+            </div>
+            <div class="text-end">
+                <button class="btn btn-outline-primary btn-sm" onclick="copyTrackingNumber()">
+                    <i class="fas fa-copy me-1"></i>Copy
+                </button>
+            </div>
+        </div>
+
+        <!-- Tracking Timeline -->
+        <div class="tracking-timeline mt-4">
+            <h5 class="mb-4">Delivery Timeline</h5>
+            
+            <div class="timeline-item completed">
+                <div class="timeline-content">
+                    <h6><i class="fas fa-check-circle me-2"></i>Order Placed</h6>
+                    <p class="mb-0">Your order has been successfully placed and confirmed.</p>
+                    <small class="text-muted">{{ order.created_at.strftime('%d %B %Y, %I:%M %p') }}</small>
+                </div>
+            </div>
+
+            <div class="timeline-item {{ 'completed' if order.status in ['processing', 'shipped', 'delivered'] else 'current' if order.status == 'pending' else 'pending' }}">
+                <div class="timeline-content">
+                    <h6>
+                        {% if order.status in ['processing', 'shipped', 'delivered'] %}
+                            <i class="fas fa-check-circle me-2"></i>Order Processing
+                        {% elif order.status == 'pending' %}
+                            <i class="fas fa-clock me-2"></i>Order Processing
+                        {% else %}
+                            <i class="fas fa-clock me-2"></i>Order Processing
+                        {% endif %}
+                    </h6>
+                    <p class="mb-0">Your order is being prepared for shipment.</p>
+                    {% if order.status in ['processing', 'shipped', 'delivered'] %}
+                        <small class="text-muted">Completed</small>
+                    {% else %}
+                        <small class="text-muted">In Progress</small>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="timeline-item {{ 'completed' if order.status in ['shipped', 'delivered'] else 'current' if order.status == 'processing' else 'pending' }}">
+                <div class="timeline-content">
+                    <h6>
+                        {% if order.status in ['shipped', 'delivered'] %}
+                            <i class="fas fa-check-circle me-2"></i>Order Shipped
+                        {% elif order.status == 'processing' %}
+                            <i class="fas fa-clock me-2"></i>Order Shipped
+                        {% else %}
+                            <i class="fas fa-clock me-2"></i>Order Shipped
+                        {% endif %}
+                    </h6>
+                    <p class="mb-0">Your order has been shipped and is on its way.</p>
+                    {% if order.status in ['shipped', 'delivered'] %}
+                        <small class="text-muted">Shipped with {{ order.courier_name or 'courier' }}</small>
+                    {% else %}
+                        <small class="text-muted">Pending</small>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="timeline-item {{ 'completed' if order.status == 'delivered' else 'current' if order.status == 'shipped' else 'pending' }}">
+                <div class="timeline-content">
+                    <h6>
+                        {% if order.status == 'delivered' %}
+                            <i class="fas fa-check-circle me-2"></i>Order Delivered
+                        {% elif order.status == 'shipped' %}
+                            <i class="fas fa-clock me-2"></i>Order Delivered
+                        {% else %}
+                            <i class="fas fa-clock me-2"></i>Order Delivered
+                        {% endif %}
+                    </h6>
+                    <p class="mb-0">Your order has been successfully delivered.</p>
+                    {% if order.status == 'delivered' and order.actual_delivery %}
+                        <small class="text-muted">Delivered on {{ order.actual_delivery.strftime('%d %B %Y') }}</small>
+                    {% elif order.status == 'shipped' %}
+                        <small class="text-muted">Out for delivery</small>
+                    {% else %}
+                        <small class="text-muted">Pending</small>
+                    {% endif %}
+                </div>
+            </div>
+
+            {% if order.is_gift %}
+            <div class="timeline-item completed">
+                <div class="timeline-content">
+                    <h6><i class="fas fa-gift me-2"></i>Gift Order</h6>
+                    <p class="mb-0">This order is marked as a gift.</p>
+                    {% if order.gift_message %}
+                        <p class="mb-0"><em>"{{ order.gift_message }}"</em></p>
+                    {% endif %}
+                    {% if order.gift_wrap %}
+                        <small class="text-muted">Gift wrapping included</small>
+                    {% endif %}
+                </div>
+            </div>
+            {% endif %}
+        </div>
+
+        {% if order.delivery_notes %}
+        <div class="alert alert-info mt-4">
+            <h6><i class="fas fa-info-circle me-2"></i>Delivery Notes</h6>
+            <p class="mb-0">{{ order.delivery_notes }}</p>
+        </div>
+        {% endif %}
+
+        {% else %}
+        <!-- No Tracking Information -->
+        <div class="text-center py-5">
+            <i class="fas fa-shipping-timed fa-3x text-muted mb-3"></i>
+            <h5>Tracking Information Not Available</h5>
+            <p class="text-muted">Tracking details will be updated once your order is shipped.</p>
+            <p class="mb-0"><strong>Current Status:</strong> 
+                <span class="badge bg-{{ 'warning' if order.status == 'pending' else 'info' if order.status == 'processing' else 'success' if order.status == 'delivered' else 'danger' }}">
+                    {{ order.status.title() }}
+                </span>
+            </p>
+        </div>
+        {% endif %}
+
+        {% else %}
+        <!-- No Order Found -->
+        <div class="no-tracking">
+            <i class="fas fa-search"></i>
+            <h4>No Order Found</h4>
+            <p class="text-muted">
+                {% if tracking_number %}
+                    No order found with tracking number: <strong>{{ tracking_number }}</strong>
+                {% else %}
+                    Please enter your tracking number to track your order.
+                {% endif %}
+            </p>
+            <a href="{{ url_for('track_order') }}" class="btn btn-primary">
+                <i class="fas fa-arrow-left me-2"></i>Back to Tracking
+            </a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<script>
+function copyTrackingNumber() {
+    const trackingNumber = '{{ order.tracking_number if order else "" }}';
+    if (trackingNumber) {
+        navigator.clipboard.writeText(trackingNumber).then(function() {
+            // Show success message
+            const button = event.target;
+            const originalText = button.innerHTML;
+            button.innerHTML = '<i class="fas fa-check me-1"></i>Copied!';
+            button.classList.remove('btn-outline-primary');
+            button.classList.add('btn-success');
+            
+            setTimeout(function() {
+                button.innerHTML = originalText;
+                button.classList.remove('btn-success');
+                button.classList.add('btn-outline-primary');
+            }, 2000);
+        });
+    }
+}
+</script>
+{% endblock %}

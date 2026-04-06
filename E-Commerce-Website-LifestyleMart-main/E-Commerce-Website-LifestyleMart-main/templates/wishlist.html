@@ -1,0 +1,148 @@
+{% extends "base.html" %}
+
+{% block title %}My Wishlist - LIFESTYLE MART{% endblock %}
+
+{% block content %}
+<style>
+.wishlist-container {
+    padding: 40px 0;
+    min-height: calc(100vh - 200px);
+}
+
+.wishlist-header {
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--accent-color) 100%);
+    color: white;
+    padding: 30px;
+    border-radius: 12px;
+    margin-bottom: 30px;
+}
+
+.wishlist-item {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    padding: 20px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.wishlist-item-image {
+    width: 120px;
+    height: 120px;
+    object-fit: cover;
+    border-radius: 8px;
+}
+
+.wishlist-item-info {
+    flex: 1;
+}
+
+.wishlist-item-title {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--text-dark);
+    margin-bottom: 5px;
+}
+
+.wishlist-item-price {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--primary-color);
+}
+
+.wishlist-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.btn-add-cart {
+    background: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 6px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.btn-add-cart:hover {
+    background: var(--accent-color);
+}
+
+.btn-remove {
+    background: #dc3545;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 6px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.btn-remove:hover {
+    background: #c82333;
+}
+
+.empty-wishlist {
+    text-align: center;
+    padding: 60px 20px;
+}
+
+.empty-wishlist i {
+    font-size: 4rem;
+    color: #ffc107;
+    margin-bottom: 20px;
+}
+</style>
+
+<div class="wishlist-container">
+    <div class="container">
+        <div class="wishlist-header">
+            <h2><i class="fas fa-heart me-3"></i>My Wishlist</h2>
+            <p class="mb-0">{{ wishlist_items|length }} items saved</p>
+        </div>
+
+        {% if wishlist_items %}
+            {% for item in wishlist_items %}
+            <div class="wishlist-item">
+                <img src="{{ item.product.image or 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80' }}" 
+                     alt="{{ item.product.name }}" class="wishlist-item-image">
+                <div class="wishlist-item-info">
+                    <a href="{{ url_for('product_detail', id=item.product.id) }}" class="text-decoration-none">
+                        <h5 class="wishlist-item-title">{{ item.product.name }}</h5>
+                    </a>
+                    <p class="text-muted mb-2">{{ item.product.brand }}</p>
+                    <div class="wishlist-item-price">৳{{ "%.2f"|format(item.product.price) }}</div>
+                </div>
+                <div class="wishlist-actions">
+                    <form action="{{ url_for('add_to_cart') }}" method="POST">
+                        <input type="hidden" name="product_id" value="{{ item.product.id }}">
+                        <input type="hidden" name="quantity" value="1">
+                        <button type="submit" class="btn-add-cart">
+                            <i class="fas fa-shopping-cart me-2"></i>Add to Cart
+                        </button>
+                    </form>
+                    <form action="{{ url_for('remove_from_wishlist') }}" method="POST">
+                        <input type="hidden" name="product_id" value="{{ item.product.id }}">
+                        <button type="submit" class="btn-remove">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </form>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="empty-wishlist">
+                <i class="fas fa-heart-broken"></i>
+                <h4>Your wishlist is empty</h4>
+                <p class="text-muted">Start adding products you love!</p>
+                <a href="{{ url_for('shop') }}" class="btn btn-primary mt-3">
+                    <i class="fas fa-shopping-bag me-2"></i>Continue Shopping
+                </a>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

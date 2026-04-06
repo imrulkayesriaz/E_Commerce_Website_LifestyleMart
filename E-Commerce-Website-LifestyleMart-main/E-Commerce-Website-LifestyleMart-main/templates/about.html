@@ -1,0 +1,342 @@
+{% extends "base.html" %}
+
+{% block title %}About Us - LIFESTYLE MART{% endblock %}
+
+{% block content %}
+<style>
+    .about-container {
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+        padding: 30px;
+        margin-top: 30px;
+    }
+
+    .hero-section {
+        background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+        color: white;
+        padding: 60px 30px;
+        border-radius: 12px 12px 0 0;
+        margin: -30px -30px 30px -30px;
+        text-align: center;
+    }
+
+    .hero-section h1 {
+        font-size: 3rem;
+        font-weight: 800;
+        margin-bottom: 20px;
+    }
+
+    .hero-section p {
+        font-size: 1.2rem;
+        opacity: 0.95;
+        max-width: 600px;
+        margin: 0 auto;
+    }
+
+    .content-section {
+        padding: 40px 0;
+    }
+
+    .content-section h2 {
+        color: var(--text-dark);
+        font-weight: 700;
+        margin-bottom: 30px;
+        position: relative;
+        padding-bottom: 15px;
+    }
+
+    .content-section h2::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 60px;
+        height: 3px;
+        background: var(--primary-color);
+    }
+
+    .feature-card {
+        background: var(--bg-light);
+        border-radius: 12px;
+        padding: 30px;
+        text-align: center;
+        transition: all 0.3s ease;
+        height: 100%;
+    }
+
+    .feature-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+    }
+
+    .feature-icon {
+        width: 80px;
+        height: 80px;
+        background: var(--primary-color);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 20px;
+        font-size: 2rem;
+        color: white;
+    }
+
+    .stats-section {
+        background: var(--bg-light);
+        padding: 60px 30px;
+        border-radius: 12px;
+        margin: 40px 0;
+    }
+
+    .stat-item {
+        text-align: center;
+    }
+
+    .stat-number {
+        font-size: 3rem;
+        font-weight: 800;
+        color: var(--primary-color);
+        display: block;
+    }
+
+    .stat-label {
+        font-size: 1.1rem;
+        color: var(--text-dark);
+        font-weight: 600;
+    }
+
+    .team-member {
+        text-align: center;
+        margin-bottom: 30px;
+    }
+
+    .team-avatar {
+        width: 150px;
+        height: 150px;
+        border-radius: 50%;
+        margin: 0 auto 20px;
+        background: var(--bg-light);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 3rem;
+        color: var(--primary-color);
+    }
+
+    .team-member h4 {
+        font-weight: 700;
+        margin-bottom: 5px;
+    }
+
+    .team-member p {
+        color: var(--text-light);
+        margin-bottom: 15px;
+    }
+
+    .social-links {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+    }
+
+    .social-links a {
+        width: 35px;
+        height: 35px;
+        background: var(--bg-light);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--text-dark);
+        transition: all 0.3s ease;
+    }
+
+    .social-links a:hover {
+        background: var(--primary-color);
+        color: white;
+        transform: translateY(-3px);
+    }
+</style>
+
+<div class="container">
+    <div class="about-container">
+        <!-- Hero Section -->
+        <div class="hero-section">
+            <h1>About LIFESTYLE MART</h1>
+            <p>Bangladesh's Premier Online Shopping Destination - Bringing Quality Fashion to Your Doorstep Since 2020
+            </p>
+        </div>
+
+        <!-- Our Story -->
+        <div class="content-section">
+            <h2>Our Story</h2>
+            <div class="row">
+                <div class="col-lg-6">
+                    <p class="lead">
+                        Founded in 2020, LIFESTYLE MART started with a simple mission: to provide Bangladeshis with
+                        access to quality fashion and lifestyle products at affordable prices.
+                    </p>
+                    <p>
+                        What began as a small online store has grown into one of Bangladesh's most trusted eCommerce
+                        platforms, serving thousands of customers across the country. We pride ourselves on curating the
+                        best collection of clothing, accessories, and lifestyle products from both local and
+                        international brands.
+                    </p>
+                    <p>
+                        Our commitment to quality, customer satisfaction, and innovation has made us a household name in
+                        Bangladeshi online retail. We continue to expand our product range and improve our services to
+                        meet the evolving needs of our valued customers.
+                    </p>
+                </div>
+                <div class="col-lg-6">
+                    <img src="https://images.unsplash.com/photo-1560472354-b33ff0c44a43?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80"
+                        alt="About Us" class="img-fluid rounded-3 shadow">
+                </div>
+            </div>
+        </div>
+
+        <!-- Our Values -->
+        <div class="content-section">
+            <h2>Our Values</h2>
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-gem"></i>
+                        </div>
+                        <h4>Quality First</h4>
+                        <p>We never compromise on quality. Every product in our collection is carefully selected to meet
+                            our high standards.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-heart"></i>
+                        </div>
+                        <h4>Customer Love</h4>
+                        <p>Our customers are at the heart of everything we do. We strive to provide exceptional service
+                            and support.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-flag"></i>
+                        </div>
+                        <h4>Proudly Bangladeshi</h4>
+                        <p>We support local brands and artisans while bringing international quality to our customers.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Our Stats -->
+        <div class="stats-section">
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="stat-item">
+                        <span class="stat-number">500K+</span>
+                        <span class="stat-label">Happy Customers</span>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="stat-item">
+                        <span class="stat-number">50+</span>
+                        <span class="stat-label">Bangladeshi Brands</span>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="stat-item">
+                        <span class="stat-number">10K+</span>
+                        <span class="stat-label">Products</span>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="stat-item">
+                        <span class="stat-number">99%</span>
+                        <span class="stat-label">Customer Satisfaction</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Our Team -->
+        <div class="content-section">
+            <h2>Meet Our Leadership Team</h2>
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="team-member">
+                        <div class="team-avatar">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <h4>Ahmed Rahman</h4>
+                        <p>Founder & CEO</p>
+                        <div class="social-links">
+                            <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                            <a href="#"><i class="fab fa-twitter"></i></a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="team-member">
+                        <div class="team-avatar">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <h4>Sarah Islam</h4>
+                        <p>Chief Operating Officer</p>
+                        <div class="social-links">
+                            <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                            <a href="#"><i class="fab fa-twitter"></i></a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="team-member">
+                        <div class="team-avatar">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <h4>Mohammad Ali</h4>
+                        <p>Head of Marketing</p>
+                        <div class="social-links">
+                            <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                            <a href="#"><i class="fab fa-twitter"></i></a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="team-member">
+                        <div class="team-avatar">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <h4>Fatima Begum</h4>
+                        <p>Customer Experience Lead</p>
+                        <div class="social-links">
+                            <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                            <a href="#"><i class="fab fa-twitter"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Call to Action -->
+        <div class="content-section text-center">
+            <h2>Join Our Journey</h2>
+            <p class="lead mb-4">
+                Be part of Bangladesh's growing online shopping community. Experience the difference with LIFESTYLE
+                MART.
+            </p>
+            <a href="{{ url_for('shop') }}" class="btn btn-primary btn-lg me-3">
+                <i class="fas fa-shopping-bag me-2"></i>Start Shopping
+            </a>
+            <a href="{{ url_for('contact') }}" class="btn btn-outline-primary btn-lg">
+                <i class="fas fa-envelope me-2"></i>Contact Us
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

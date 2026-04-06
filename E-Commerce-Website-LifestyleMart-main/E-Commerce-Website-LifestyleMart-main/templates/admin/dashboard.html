@@ -1,0 +1,590 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Dashboard - LIFESTYLE MART{% endblock %}
+
+{% block content %}
+<style>
+/* Daraz Admin Panel Styles */
+.admin-wrapper {
+    display: flex;
+    min-height: 100vh;
+    background: #f5f5f5;
+}
+
+.admin-sidebar {
+    width: 250px;
+    background: linear-gradient(180deg, #ff6b35 0%, #f7931e 100%);
+    box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+    position: fixed;
+    height: 100vh;
+    overflow-y: auto;
+    z-index: 1000;
+}
+
+.admin-logo {
+    padding: 20px;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    text-align: center;
+}
+
+.admin-logo h3 {
+    color: white;
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: 700;
+}
+
+.admin-logo p {
+    color: rgba(255,255,255,0.8);
+    margin: 5px 0 0 0;
+    font-size: 0.875rem;
+}
+
+.admin-nav {
+    padding: 20px 0;
+}
+
+.nav-section {
+    margin-bottom: 30px;
+}
+
+.nav-section-title {
+    color: rgba(255,255,255,0.6);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    padding: 0 20px;
+    margin-bottom: 10px;
+    font-weight: 600;
+}
+
+.admin-nav-link {
+    display: flex;
+    align-items: center;
+    padding: 12px 20px;
+    color: rgba(255,255,255,0.9);
+    text-decoration: none;
+    transition: all 0.3s ease;
+    border-left: 3px solid transparent;
+}
+
+.admin-nav-link:hover {
+    background: rgba(255,255,255,0.1);
+    color: white;
+    border-left-color: rgba(255,255,255,0.3);
+}
+
+.admin-nav-link.active {
+    background: rgba(255,255,255,0.15);
+    color: white;
+    border-left-color: white;
+}
+
+.admin-nav-link i {
+    width: 20px;
+    margin-right: 12px;
+    text-align: center;
+}
+
+.admin-main {
+    flex: 1;
+    margin-left: 250px;
+    padding: 20px;
+}
+
+.admin-header {
+    background: white;
+    border-radius: 8px;
+    padding: 20px 30px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.admin-header h1 {
+    margin: 0;
+    color: #333;
+    font-size: 1.5rem;
+    font-weight: 600;
+}
+
+.admin-header-right {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.admin-user {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.admin-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: #ff6b35;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: 700;
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.stat-card {
+    background: white;
+    border-radius: 8px;
+    padding: 25px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border-left: 4px solid #ff6b35;
+}
+
+.stat-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+}
+
+.stat-card-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    margin-bottom: 15px;
+}
+
+.stat-card-icon.users {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+}
+
+.stat-card-icon.orders {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    color: white;
+}
+
+.stat-card-icon.products {
+    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    color: white;
+}
+
+.stat-card-icon.revenue {
+    background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+    color: white;
+}
+
+.stat-card-number {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #333;
+    margin-bottom: 5px;
+}
+
+.stat-card-label {
+    color: #666;
+    font-size: 0.875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.quick-actions {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.quick-action-card {
+    background: white;
+    border-radius: 8px;
+    padding: 20px;
+    text-align: center;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    transition: all 0.3s ease;
+    text-decoration: none;
+    color: inherit;
+}
+
+.quick-action-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+    text-decoration: none;
+    color: inherit;
+}
+
+.quick-action-card i {
+    font-size: 2rem;
+    color: #ff6b35;
+    margin-bottom: 10px;
+}
+
+.quick-action-card h5 {
+    color: #333;
+    margin-bottom: 5px;
+    font-size: 1rem;
+}
+
+.quick-action-card p {
+    color: #666;
+    margin: 0;
+    font-size: 0.875rem;
+}
+
+.recent-orders {
+    background: white;
+    border-radius: 8px;
+    padding: 25px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+.recent-orders-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.recent-orders-header h3 {
+    margin: 0;
+    color: #333;
+    font-size: 1.25rem;
+    font-weight: 600;
+}
+
+.order-item {
+    padding: 15px 0;
+    border-bottom: 1px solid #f0f0f0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.order-item:last-child {
+    border-bottom: none;
+}
+
+.order-info h6 {
+    margin: 0 0 5px 0;
+    color: #333;
+    font-weight: 600;
+}
+
+.order-info p {
+    margin: 0;
+    color: #666;
+    font-size: 0.875rem;
+}
+
+.order-amount {
+    font-weight: 700;
+    color: #ff6b35;
+}
+
+.order-status {
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.order-status.pending {
+    background: #fff3cd;
+    color: #856404;
+}
+
+.order-status.processing {
+    background: #cce5ff;
+    color: #004085;
+}
+
+.order-status.shipped {
+    background: #d4edda;
+    color: #155724;
+}
+
+.order-status.delivered {
+    background: #d1ecf1;
+    color: #0c5460;
+}
+
+.order-status.cancelled {
+    background: #f8d7da;
+    color: #721c24;
+}
+
+@media (max-width: 768px) {
+    .admin-sidebar {
+        width: 200px;
+    }
+    
+    .admin-main {
+        margin-left: 200px;
+    }
+    
+    .admin-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+    }
+    
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .quick-actions {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+
+<div class="admin-wrapper">
+    <!-- Admin Sidebar -->
+    <div class="admin-sidebar">
+        <div class="admin-logo">
+            <h3>LIFESTYLE MART</h3>
+            <p>Admin Panel</p>
+        </div>
+        
+        <nav class="admin-nav">
+            <div class="nav-section">
+                <div class="nav-section-title">Dashboard</div>
+                <a href="{{ url_for('admin_dashboard') }}" class="admin-nav-link active">
+                    <i class="fas fa-tachometer-alt"></i>
+                    Dashboard
+                </a>
+            </div>
+            
+            <div class="nav-section">
+                <div class="nav-section-title">Products</div>
+                <a href="{{ url_for('admin_products') }}" class="admin-nav-link">
+                    <i class="fas fa-box"></i>
+                    All Products
+                </a>
+                <a href="{{ url_for('admin_add_product') }}" class="admin-nav-link">
+                    <i class="fas fa-plus"></i>
+                    Add Product
+                </a>
+                <a href="{{ url_for('admin_categories') }}" class="admin-nav-link">
+                    <i class="fas fa-tags"></i>
+                    Categories
+                </a>
+                <a href="{{ url_for('admin_reviews') }}" class="admin-nav-link">
+                    <i class="fas fa-star"></i>
+                    Reviews
+                </a>
+            </div>
+            
+            <div class="nav-section">
+                <div class="nav-section-title">Orders</div>
+                <a href="{{ url_for('admin_orders') }}" class="admin-nav-link">
+                    <i class="fas fa-shopping-cart"></i>
+                    All Orders
+                </a>
+                <a href="#" class="admin-nav-link">
+                    <i class="fas fa-truck"></i>
+                    Order Tracking
+                </a>
+                <a href="#" class="admin-nav-link">
+                    <i class="fas fa-undo"></i>
+                    Returns
+                </a>
+            </div>
+            
+            <div class="nav-section">
+                <div class="nav-section-title">Customers</div>
+                <a href="{{ url_for('admin_users') }}" class="admin-nav-link">
+                    <i class="fas fa-users"></i>
+                    All Customers
+                </a>
+                <a href="#" class="admin-nav-link">
+                    <i class="fas fa-user-shield"></i>
+                    User Roles
+                </a>
+            </div>
+            
+            <div class="nav-section">
+                <div class="nav-section-title">Content</div>
+                <a href="#" class="admin-nav-link">
+                    <i class="fas fa-newspaper"></i>
+                    Blog
+                </a>
+                <a href="#" class="admin-nav-link">
+                    <i class="fas fa-bullhorn"></i>
+                    Banners
+                </a>
+                <a href="#" class="admin-nav-link">
+                    <i class="fas fa-percentage"></i>
+                    Coupons
+                </a>
+            </div>
+            
+            <div class="nav-section">
+                <div class="nav-section-title">Reports</div>
+                <a href="#" class="admin-nav-link">
+                    <i class="fas fa-chart-bar"></i>
+                    Sales Report
+                </a>
+                <a href="#" class="admin-nav-link">
+                    <i class="fas fa-chart-line"></i>
+                    Analytics
+                </a>
+            </div>
+            
+            <div class="nav-section">
+                <div class="nav-section-title">Settings</div>
+                <a href="#" class="admin-nav-link">
+                    <i class="fas fa-cog"></i>
+                    General Settings
+                </a>
+                <a href="#" class="admin-nav-link">
+                    <i class="fas fa-store"></i>
+                    Store Settings
+                </a>
+                <a href="#" class="admin-nav-link">
+                    <i class="fas fa-credit-card"></i>
+                    Payment Settings
+                </a>
+                <a href="#" class="admin-nav-link">
+                    <i class="fas fa-shipping-fast"></i>
+                    Shipping Settings
+                </a>
+            </div>
+            
+            <div class="nav-section">
+                <a href="{{ url_for('index') }}" class="admin-nav-link">
+                    <i class="fas fa-home"></i>
+                    Back to Store
+                </a>
+                <a href="{{ url_for('logout') }}" class="admin-nav-link">
+                    <i class="fas fa-sign-out-alt"></i>
+                    Logout
+                </a>
+            </div>
+        </nav>
+    </div>
+
+    <!-- Admin Main Content -->
+    <div class="admin-main">
+        <!-- Admin Header -->
+        <div class="admin-header">
+            <div>
+                <h1>Dashboard Overview</h1>
+                <p class="text-muted mb-0">Welcome back, {{ current_user.name }}!</p>
+            </div>
+            <div class="admin-header-right">
+                <div class="admin-user">
+                    <div class="admin-avatar">
+                        {{ current_user.name[0].upper() }}
+                    </div>
+                    <div>
+                        <div class="fw-bold">{{ current_user.name }}</div>
+                        <small class="text-muted">Administrator</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Statistics Cards -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-card-icon users">
+                    <i class="fas fa-users"></i>
+                </div>
+                <div class="stat-card-number">{{ total_users }}</div>
+                <div class="stat-card-label">Total Customers</div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-card-icon orders">
+                    <i class="fas fa-shopping-cart"></i>
+                </div>
+                <div class="stat-card-number">{{ total_orders }}</div>
+                <div class="stat-card-label">Total Orders</div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-card-icon products">
+                    <i class="fas fa-box"></i>
+                </div>
+                <div class="stat-card-number">{{ total_products }}</div>
+                <div class="stat-card-label">Total Products</div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-card-icon revenue">
+                    <i class="fas fa-dollar-sign"></i>
+                </div>
+                <div class="stat-card-number">৳{{ "%.0f"|format(total_revenue) }}</div>
+                <div class="stat-card-label">Total Revenue</div>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="quick-actions">
+            <a href="{{ url_for('admin_add_product') }}" class="quick-action-card">
+                <i class="fas fa-plus-circle"></i>
+                <h5>Add Product</h5>
+                <p>Create new product listing</p>
+            </a>
+            <a href="{{ url_for('admin_orders') }}" class="quick-action-card">
+                <i class="fas fa-shopping-cart"></i>
+                <h5>View Orders</h5>
+                <p>Manage customer orders</p>
+            </a>
+            <a href="#" class="quick-action-card">
+                <i class="fas fa-percentage"></i>
+                <h5>Add Coupon</h5>
+                <p>Create discount codes</p>
+            </a>
+            <a href="#" class="quick-action-card">
+                <i class="fas fa-chart-bar"></i>
+                <h5>View Reports</h5>
+                <p>Sales analytics</p>
+            </a>
+        </div>
+
+        <!-- Recent Orders -->
+        <div class="recent-orders">
+            <div class="recent-orders-header">
+                <h3>Recent Orders</h3>
+                <a href="{{ url_for('admin_orders') }}" class="btn btn-sm btn-outline-primary">View All</a>
+            </div>
+            
+            {% if recent_orders %}
+                {% for order in recent_orders %}
+                <div class="order-item">
+                    <div class="order-info">
+                        <h6>{{ order.order_number }}</h6>
+                        <p>{{ order.user.name if order.user else 'Unknown Customer' }} • {{ order.created_at.strftime('%d %b %Y') }}</p>
+                    </div>
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="order-amount">৳{{ "%.2f"|format(order.total_amount) }}</div>
+                        <span class="order-status {{ order.status or 'pending' }}">{{ order.status or 'pending' }}</span>
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <div class="text-center py-5">
+                    <i class="fas fa-shopping-cart fa-3x text-muted mb-3"></i>
+                    <h5>No orders yet</h5>
+                    <p class="text-muted">Orders will appear here once customers start shopping.</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

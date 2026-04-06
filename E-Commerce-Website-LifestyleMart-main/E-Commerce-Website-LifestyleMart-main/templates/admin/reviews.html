@@ -1,0 +1,385 @@
+{% extends "base.html" %}
+
+{% block title %}Reviews - Admin Panel{% endblock %}
+
+{% block content %}
+<style>
+.admin-container {
+    background: #f8f9fa;
+    min-height: 100vh;
+}
+
+.admin-sidebar {
+    background: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%);
+    min-height: 100vh;
+    box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+}
+
+.admin-sidebar .nav-link {
+    color: rgba(255,255,255,0.9);
+    padding: 15px 20px;
+    border-radius: 8px;
+    margin: 5px 10px;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.admin-sidebar .nav-link:hover,
+.admin-sidebar .nav-link.active {
+    background: rgba(255,255,255,0.2);
+    color: white;
+    transform: translateX(5px);
+}
+
+.admin-main {
+    padding: 30px;
+}
+
+.admin-header {
+    background: white;
+    border-radius: 12px;
+    padding: 20px 30px;
+    margin-bottom: 30px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.reviews-table {
+    background: white;
+    border-radius: 12px;
+    padding: 25px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+}
+
+.review-status {
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.review-status.approved {
+    background: #d4edda;
+    color: #155724;
+}
+
+.review-status.pending {
+    background: #fff3cd;
+    color: #856404;
+}
+
+.review-status.rejected {
+    background: #f8d7da;
+    color: #721c24;
+}
+
+.rating-stars {
+    color: #ffc107;
+    font-size: 1rem;
+}
+
+.review-card {
+    border: 1px solid #e9ecef;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 20px;
+    transition: all 0.3s ease;
+}
+
+.review-card:hover {
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    transform: translateY(-2px);
+}
+
+.review-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: start;
+    margin-bottom: 15px;
+}
+
+.reviewer-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.reviewer-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: var(--primary-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: 700;
+}
+
+.review-content {
+    margin-bottom: 15px;
+    line-height: 1.6;
+}
+
+.review-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.875rem;
+    color: #6c757d;
+}
+
+.filter-buttons {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.filter-btn {
+    padding: 8px 16px;
+    border: 2px solid #e9ecef;
+    background: white;
+    border-radius: 20px;
+    font-size: 0.875rem;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    color: var(--text-dark);
+}
+
+.filter-btn:hover,
+.filter-btn.active {
+    border-color: var(--primary-color);
+    background: var(--primary-color);
+    color: white;
+    text-decoration: none;
+}
+
+.table-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.pagination {
+    justify-content: center;
+    margin-top: 20px;
+}
+</style>
+
+<div class="admin-container">
+    <div class="row g-0">
+        <!-- Admin Sidebar -->
+        <div class="col-md-3 col-lg-2">
+            <div class="admin-sidebar p-3">
+                <div class="text-center mb-4">
+                    <h4 class="text-white">Admin Panel</h4>
+                    <small class="text-white-50">LIFESTYLE MART</small>
+                </div>
+                
+                <nav class="nav flex-column">
+                    <a href="{{ url_for('admin_dashboard') }}" class="nav-link">
+                        <i class="fas fa-tachometer-alt"></i>
+                        Dashboard
+                    </a>
+                    <a href="#" class="nav-link">
+                        <i class="fas fa-box"></i>
+                        Products
+                    </a>
+                    <a href="#" class="nav-link">
+                        <i class="fas fa-shopping-cart"></i>
+                        Orders
+                    </a>
+                    <a href="#" class="nav-link">
+                        <i class="fas fa-users"></i>
+                        Users
+                    </a>
+                    <a href="#" class="nav-link">
+                        <i class="fas fa-tags"></i>
+                        Categories
+                    </a>
+                    <a href="{{ url_for('admin_reviews') }}" class="nav-link active">
+                        <i class="fas fa-star"></i>
+                        Reviews
+                    </a>
+                    <a href="#" class="nav-link">
+                        <i class="fas fa-chart-bar"></i>
+                        Analytics
+                    </a>
+                    <a href="#" class="nav-link">
+                        <i class="fas fa-cog"></i>
+                        Settings
+                    </a>
+                    <a href="{{ url_for('index') }}" class="nav-link">
+                        <i class="fas fa-home"></i>
+                        Back to Site
+                    </a>
+                </nav>
+            </div>
+        </div>
+
+        <!-- Admin Main Content -->
+        <div class="col-md-9 col-lg-10">
+            <div class="admin-main">
+                <!-- Admin Header -->
+                <div class="admin-header">
+                    <div>
+                        <h1>Reviews Management</h1>
+                        <p class="text-muted mb-0">Moderate customer reviews and feedback</p>
+                    </div>
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="text-end">
+                            <small class="text-muted">Total Reviews</small>
+                            <div class="fw-bold">{{ reviews.total }}</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Filter Buttons -->
+                <div class="filter-buttons mb-4">
+                    <a href="{{ url_for('admin_reviews') }}" class="filter-btn {{ 'active' if not status }}">
+                        All Reviews
+                    </a>
+                    <a href="{{ url_for('admin_reviews', status='pending') }}" class="filter-btn {{ 'active' if status == 'pending' }}">
+                        Pending
+                    </a>
+                    <a href="{{ url_for('admin_reviews', status='approved') }}" class="filter-btn {{ 'active' if status == 'approved' }}">
+                        Approved
+                    </a>
+                    <a href="{{ url_for('admin_reviews', status='rejected') }}" class="filter-btn {{ 'active' if status == 'rejected' }}">
+                        Rejected
+                    </a>
+                </div>
+
+                <!-- Reviews Table -->
+                <div class="reviews-table">
+                    {% if reviews.items %}
+                        {% for review in reviews.items %}
+                        <div class="review-card">
+                            <div class="review-header">
+                                <div class="reviewer-info">
+                                    <div class="reviewer-avatar">
+                                        {{ review.user.name[0].upper() if review.user else 'U' }}
+                                    </div>
+                                    <div>
+                                        <div class="fw-bold">{{ review.user.name if review.user else 'Unknown User' }}</div>
+                                        <small class="text-muted">{{ review.user.email if review.user else 'No email' }}</small>
+                                    </div>
+                                </div>
+                                <div class="d-flex align-items-center gap-2">
+                                    <span class="review-status {{ review.status or 'pending' }}">
+                                        {{ review.status or 'pending' }}
+                                    </span>
+                                    <div class="table-actions">
+                                        {% if review.status != 'approved' %}
+                                        <a href="{{ url_for('admin_approve_review', id=review.id) }}" 
+                                           class="btn btn-sm btn-outline-success" title="Approve Review">
+                                            <i class="fas fa-check"></i>
+                                        </a>
+                                        {% endif %}
+                                        {% if review.status != 'rejected' %}
+                                        <a href="{{ url_for('admin_reject_review', id=review.id) }}" 
+                                           class="btn btn-sm btn-outline-danger" title="Reject Review">
+                                            <i class="fas fa-times"></i>
+                                        </a>
+                                        {% endif %}
+                                        <a href="{{ url_for('product_detail', id=review.product_id) }}" 
+                                           class="btn btn-sm btn-outline-primary" title="View Product">
+                                            <i class="fas fa-box"></i>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="review-content">
+                                <div class="rating-stars mb-2">
+                                    {% for i in range(5) %}
+                                        {% if i < review.rating %}
+                                        <i class="fas fa-star"></i>
+                                        {% else %}
+                                        <i class="far fa-star"></i>
+                                        {% endif %}
+                                    {% endfor %}
+                                    <span class="ms-2 fw-bold">{{ review.rating }}/5</span>
+                                </div>
+                                <p class="mb-0">{{ review.review_text }}</p>
+                            </div>
+                            
+                            <div class="review-meta">
+                                <div>
+                                    <strong>Product:</strong> {{ review.product.name if review.product else 'Unknown Product' }}
+                                </div>
+                                <div>
+                                    {{ review.created_at.strftime('%d %b %Y, %I:%M %p') }}
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+
+                        <!-- Pagination -->
+                        {% if reviews.pages > 1 %}
+                        <nav aria-label="Reviews pagination">
+                            <ul class="pagination">
+                                {% if reviews.has_prev %}
+                                    <li class="page-item">
+                                        <a class="page-link" href="{{ url_for('admin_reviews', page=reviews.prev_num, status=status) }}">
+                                            Previous
+                                        </a>
+                                    </li>
+                                {% endif %}
+                                
+                                {% for page_num in reviews.iter_pages() %}
+                                    {% if page_num %}
+                                        {% if page_num != reviews.page %}
+                                            <li class="page-item">
+                                                <a class="page-link" href="{{ url_for('admin_reviews', page=page_num, status=status) }}">
+                                                    {{ page_num }}
+                                                </a>
+                                            </li>
+                                        {% else %}
+                                            <li class="page-item active">
+                                                <span class="page-link">{{ page_num }}</span>
+                                            </li>
+                                        {% endif %}
+                                    {% else %}
+                                        <li class="page-item disabled">
+                                            <span class="page-link">...</span>
+                                        </li>
+                                    {% endif %}
+                                {% endfor %}
+                                
+                                {% if reviews.has_next %}
+                                    <li class="page-item">
+                                        <a class="page-link" href="{{ url_for('admin_reviews', page=reviews.next_num, status=status) }}">
+                                            Next
+                                        </a>
+                                    </li>
+                                {% endif %}
+                            </ul>
+                        </nav>
+                        {% endif %}
+                    {% else %}
+                    <div class="text-center py-5">
+                        <i class="fas fa-star fa-3x text-muted mb-3"></i>
+                        <h5>No reviews found</h5>
+                        <p class="text-muted">
+                            {% if status %}
+                                No reviews with status "{{ status }}" found.
+                            {% else %}
+                                No reviews in the system yet.
+                            {% endif %}
+                        </p>
+                        <a href="{{ url_for('index') }}" class="btn btn-primary">
+                            <i class="fas fa-store me-2"></i>Visit Store
+                        </a>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,305 @@
+{% extends "base.html" %}
+
+{% block title %}Messages - LIFESTYLE MART{% endblock %}
+
+{% block extra_css %}
+<style>
+    .chat-container {
+        height: calc(100vh - 180px);
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 5px 25px rgba(0,0,0,0.05);
+        display: flex;
+        overflow: hidden;
+        margin-bottom: 20px;
+    }
+
+    /* Sidebar */
+    .chat-sidebar {
+        width: 350px;
+        border-right: 1px solid #f0f0f0;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .sidebar-header {
+        padding: 20px;
+        border-bottom: 1px solid #f0f0f0;
+        background: #fafafa;
+    }
+
+    .conversation-list {
+        flex: 1;
+        overflow-y: auto;
+    }
+
+    .conversation-item {
+        padding: 15px 20px;
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        cursor: pointer;
+        transition: background 0.2s;
+        text-decoration: none;
+        color: inherit;
+        border-bottom: 1px solid #f9f9f9;
+        position: relative;
+    }
+
+    .conversation-item:hover {
+        background: #f8f9fa;
+        text-decoration: none;
+        color: inherit;
+    }
+
+    .conversation-item.active {
+        background: #fff5f0;
+        border-left: 4px solid var(--primary-color);
+    }
+
+    .avatar {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        background: #eee;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        color: #777;
+        flex-shrink: 0;
+        font-size: 1.2rem;
+    }
+
+    .unread-badge {
+        position: absolute;
+        right: 20px;
+        top: 20px;
+        width: 10px;
+        height: 10px;
+        background: var(--primary-color);
+        border-radius: 50%;
+    }
+
+    /* Main Chat Area */
+    .chat-main {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .chat-header {
+        padding: 15px 25px;
+        border-bottom: 1px solid #f0f0f0;
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+
+    .messages-area {
+        flex: 1;
+        padding: 25px;
+        overflow-y: auto;
+        background: #fcfcfc;
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    /* Message Bubbles */
+    .message {
+        max-width: 70%;
+        padding: 12px 18px;
+        border-radius: 18px;
+        font-size: 0.95rem;
+        position: relative;
+    }
+
+    .message.sent {
+        align-self: flex-end;
+        background: var(--primary-color);
+        color: white;
+        border-bottom-right-radius: 4px;
+    }
+
+    .message.received {
+        align-self: flex-start;
+        background: #efefef;
+        color: #333;
+        border-bottom-left-radius: 4px;
+    }
+
+    .message-time {
+        font-size: 0.7rem;
+        margin-top: 5px;
+        opacity: 0.7;
+        display: block;
+        text-align: right;
+    }
+
+    /* Chat Input */
+    .chat-input-area {
+        padding: 20px 25px;
+        border-top: 1px solid #f0f0f0;
+    }
+
+    .chat-form {
+        display: flex;
+        gap: 15px;
+    }
+
+    .chat-input {
+        flex: 1;
+        border: 1px solid #ddd;
+        border-radius: 25px;
+        padding: 12px 20px;
+        outline: none;
+        transition: border-color 0.2s;
+    }
+
+    .chat-input:focus {
+        border-color: var(--primary-color);
+    }
+
+    .send-btn {
+        width: 45px;
+        height: 45px;
+        border-radius: 50%;
+        background: var(--primary-color);
+        color: white;
+        border: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: transform 0.2s;
+    }
+
+    .send-btn:hover {
+        transform: scale(1.05);
+        background: var(--accent-color);
+    }
+
+    .empty-chat {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        color: #aaa;
+    }
+
+    .empty-chat i {
+        font-size: 5rem;
+        margin-bottom: 20px;
+        opacity: 0.3;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="chat-container">
+        <!-- Sidebar -->
+        <div class="chat-sidebar">
+            <div class="sidebar-header">
+                <h5 class="fw-bold mb-0">Messages</h5>
+            </div>
+            <div class="conversation-list">
+                {% if conversations %}
+                    {% for conv in conversations %}
+                    <a href="{{ url_for('chat', user_id=conv.user.id) }}" 
+                       class="conversation-item {% if active_chat and active_chat.id == conv.user.id %}active{% endif %}">
+                        <div class="avatar bg-light border">
+                            {{ conv.user.shop_name[0].upper() if conv.user.shop_name else conv.user.name[0].upper() }}
+                        </div>
+                        <div class="flex-grow-1 overflow-hidden">
+                            <div class="d-flex justify-content-between align-items-center mb-1">
+                                <h6 class="mb-0 fw-bold text-truncate">
+                                    {{ conv.user.shop_name if conv.user.shop_name else conv.user.name }}
+                                </h6>
+                                <small class="text-muted" style="font-size: 0.65rem;">
+                                    {{ conv.last_message.created_at.strftime('%H:%M') if conv.last_message else '' }}
+                                </small>
+                            </div>
+                            <p class="mb-0 text-muted small text-truncate">
+                                {% if conv.last_message %}
+                                    {% if conv.last_message.sender_id == current_user.id %}You: {% endif %}
+                                    {{ conv.last_message.content }}
+                                {% else %}
+                                    No messages yet
+                                {% endif %}
+                            </p>
+                        </div>
+                        {% if conv.last_message and conv.last_message.receiver_id == current_user.id and not conv.last_message.is_read %}
+                        <div class="unread-badge"></div>
+                        {% endif %}
+                    </a>
+                    {% endfor %}
+                {% else %}
+                    <div class="p-5 text-center text-muted">
+                        <small>No conversations yet.</small>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Main Chat Area -->
+        <div class="chat-main">
+            {% if active_chat %}
+            <div class="chat-header">
+                <div class="avatar bg-light border" style="width: 40px; height: 40px; font-size: 1rem;">
+                    {{ active_chat.shop_name[0].upper() if active_chat.shop_name else active_chat.name[0].upper() }}
+                </div>
+                <div>
+                    <h6 class="mb-0 fw-bold">{{ active_chat.shop_name if active_chat.shop_name else active_chat.name }}</h6>
+                    <small class="text-success" style="font-size: 0.7rem;">
+                        <i class="fas fa-circle me-1"></i> Active Now
+                    </small>
+                </div>
+            </div>
+
+            <div class="messages-area" id="messagesArea">
+                {% if messages %}
+                    {% for msg in messages %}
+                    <div class="message {% if msg.sender_id == current_user.id %}sent{% else %}received{% endif %}">
+                        {{ msg.content }}
+                        <span class="message-time">{{ msg.created_at.strftime('%H:%M') }}</span>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="empty-chat">
+                        <i class="far fa-comments"></i>
+                        <p>No messages here yet. Start the conversation!</p>
+                    </div>
+                {% endif %}
+            </div>
+
+            <div class="chat-input-area">
+                <form action="{{ url_for('send_message') }}" method="POST" class="chat-form">
+                    <input type="hidden" name="receiver_id" value="{{ active_chat.id }}">
+                    <input type="text" name="content" class="chat-input" placeholder="Type your message here..." required autocomplete="off">
+                    <button type="submit" class="send-btn shadow-sm">
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                </form>
+            </div>
+            {% else %}
+            <div class="empty-chat">
+                <i class="far fa-comments"></i>
+                <h4 class="fw-bold text-dark">Your Inbox</h4>
+                <p>Select a conversation to start messaging.</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<script>
+    // Scroll messages to bottom
+    const messagesArea = document.getElementById('messagesArea');
+    if (messagesArea) {
+        messagesArea.scrollTop = messagesArea.scrollHeight;
+    }
+</script>
+{% endblock %}

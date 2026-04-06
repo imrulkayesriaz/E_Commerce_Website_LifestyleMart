@@ -1,0 +1,222 @@
+{% extends "base.html" %}
+
+{% block title %}Update Tracking - Order #{{ order.order_number }} | LIFESTYLE MART{% endblock %}
+
+{% block content %}
+<style>
+.tracking-container {
+    padding: 30px 0;
+    background: #f5f5f5;
+    min-height: calc(100vh - 200px);
+}
+
+.admin-card {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    margin-bottom: 20px;
+    overflow: hidden;
+}
+
+.admin-card-header {
+    background: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%);
+    color: white;
+    padding: 20px;
+}
+
+.admin-card-header h4 {
+    margin: 0;
+    font-weight: 700;
+}
+
+.admin-card-body {
+    padding: 20px;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-label {
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 8px;
+    display: block;
+}
+
+.form-control {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #e9ecef;
+    border-radius: 4px;
+    font-size: 0.875rem;
+}
+
+.form-control:focus {
+    border-color: #ff6b35;
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(255, 107, 53, 0.1);
+}
+
+.admin-btn {
+    padding: 12px 30px;
+    border: none;
+    border-radius: 4px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: inline-block;
+}
+
+.admin-btn-primary {
+    background: #ff6b35;
+    color: white;
+}
+
+.admin-btn-primary:hover {
+    background: #e55a2b;
+    color: white;
+}
+
+.admin-btn-secondary {
+    background: #6c757d;
+    color: white;
+}
+
+.admin-btn-secondary:hover {
+    background: #5a6268;
+    color: white;
+}
+
+.order-summary {
+    background: #f8f9fa;
+    border-radius: 6px;
+    padding: 15px;
+    margin-bottom: 20px;
+}
+
+.order-summary-item {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 8px;
+}
+
+.order-summary-item:last-child {
+    margin-bottom: 0;
+    padding-top: 8px;
+    border-top: 1px solid #e9ecef;
+    font-weight: 700;
+}
+</style>
+
+<div class="tracking-container">
+    <div class="container">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h3>Update Tracking Information</h3>
+            <a href="{{ url_for('admin_order_detail', id=order.id) }}" class="admin-btn admin-btn-secondary">
+                <i class="fas fa-arrow-left me-2"></i>Back to Order
+            </a>
+        </div>
+
+        <div class="row">
+            <div class="col-md-8">
+                <div class="admin-card">
+                    <div class="admin-card-header">
+                        <h4><i class="fas fa-shipping-fast me-2"></i>Tracking Details</h4>
+                    </div>
+                    <div class="admin-card-body">
+                        <form method="POST">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label class="form-label">Tracking Number</label>
+                                        <input type="text" name="tracking_number" class="form-control" 
+                                               value="{{ order.tracking_number or '' }}" 
+                                               placeholder="Enter tracking number" required>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label class="form-label">Courier Service</label>
+                                        <select name="courier_name" class="form-control" required>
+                                            <option value="">Select Courier</option>
+                                            <option value="pathao" {% if order.courier_name == 'pathao' %}selected{% endif %}>Pathao</option>
+                                            <option value="redx" {% if order.courier_name == 'redx' %}selected{% endif %}>RedX</option>
+                                            <option value="steadfast" {% if order.courier_name == 'steadfast' %}selected{% endif %}>Steadfast</option>
+                                            <option value="ecourier" {% if order.courier_name == 'ecourier' %}selected{% endif %}>eCourier</option>
+                                            <option value="other" {% if order.courier_name == 'other' %}selected{% endif %}>Other</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Estimated Delivery Date</label>
+                                <input type="date" name="estimated_delivery" class="form-control" 
+                                       value="{{ order.estimated_delivery.strftime('%Y-%m-%d') if order.estimated_delivery else '' }}">
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Delivery Notes</label>
+                                <textarea name="delivery_notes" class="form-control" rows="4" 
+                                          placeholder="Add any special delivery instructions or notes...">{{ order.delivery_notes or '' }}</textarea>
+                            </div>
+
+                            <div class="d-flex gap-3">
+                                <button type="submit" class="admin-btn admin-btn-primary">
+                                    <i class="fas fa-save me-2"></i>Update Tracking
+                                </button>
+                                <a href="{{ url_for('admin_order_detail', id=order.id) }}" class="admin-btn admin-btn-secondary">
+                                    Cancel
+                                </a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="admin-card">
+                    <div class="admin-card-header">
+                        <h4><i class="fas fa-info-circle me-2"></i>Order Summary</h4>
+                    </div>
+                    <div class="admin-card-body">
+                        <div class="order-summary">
+                            <div class="order-summary-item">
+                                <span>Order Number:</span>
+                                <span>{{ order.order_number }}</span>
+                            </div>
+                            <div class="order-summary-item">
+                                <span>Customer:</span>
+                                <span>{{ order.user.name }}</span>
+                            </div>
+                            <div class="order-summary-item">
+                                <span>Status:</span>
+                                <span>{{ order.status.title() }}</span>
+                            </div>
+                            <div class="order-summary-item">
+                                <span>Total:</span>
+                                <span>৳{{ "%.2f"|format(order.total_amount) }}</span>
+                            </div>
+                        </div>
+
+                        {% if order.tracking_number %}
+                        <div class="alert alert-info">
+                            <h6 class="fw-bold"><i class="fas fa-check-circle me-2"></i>Current Tracking</h6>
+                            <p class="mb-1"><strong>Number:</strong> {{ order.tracking_number }}</p>
+                            <p class="mb-0"><strong>Courier:</strong> {{ order.courier_name.title() }}</p>
+                        </div>
+                        {% else %}
+                        <div class="alert alert-warning">
+                            <i class="fas fa-exclamation-triangle me-2"></i>
+                            No tracking information has been added yet.
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

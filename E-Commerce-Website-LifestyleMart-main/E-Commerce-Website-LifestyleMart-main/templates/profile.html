@@ -1,0 +1,394 @@
+{% extends "base.html" %}
+
+{% block title %}My Account - LIFESTYLE MART{% endblock %}
+
+{% block content %}
+<style>
+/* Daraz-style Profile */
+.daraz-profile-container {
+    background: #f5f5f5;
+    min-height: calc(100vh - 200px);
+    padding: 20px 0;
+}
+
+.daraz-profile-sidebar {
+    background: white;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+.daraz-profile-avatar {
+    width: 80px;
+    height: 80px;
+    background: #ff6b35;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    color: white;
+    margin: 0 auto 15px;
+}
+
+.daraz-profile-name {
+    font-size: 1.1rem;
+    font-weight: 600;
+    text-align: center;
+    margin-bottom: 5px;
+}
+
+.daraz-profile-email {
+    font-size: 0.875rem;
+    color: #6c757d;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.daraz-profile-menu {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.daraz-profile-menu li {
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.daraz-profile-menu li:last-child {
+    border-bottom: none;
+}
+
+.daraz-profile-menu a {
+    display: flex;
+    align-items: center;
+    padding: 12px 15px;
+    color: #333;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.daraz-profile-menu a:hover,
+.daraz-profile-menu a.active {
+    background: #fff5f0;
+    color: #ff6b35;
+}
+
+.daraz-profile-menu i {
+    width: 24px;
+    margin-right: 10px;
+    color: #6c757d;
+}
+
+.daraz-profile-menu a:hover i,
+.daraz-profile-menu a.active i {
+    color: #ff6b35;
+}
+
+.daraz-profile-content {
+    background: white;
+    border-radius: 8px;
+    padding: 25px;
+}
+
+.daraz-section-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #333;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #ff6b35;
+}
+
+.daraz-form-group {
+    margin-bottom: 20px;
+}
+
+.daraz-form-label {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 8px;
+    display: block;
+}
+
+.daraz-form-control {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid #e9ecef;
+    border-radius: 4px;
+    font-size: 0.875rem;
+    transition: all 0.3s ease;
+}
+
+.daraz-form-control:focus {
+    border-color: #ff6b35;
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(255, 107, 53, 0.1);
+}
+
+.daraz-btn {
+    padding: 12px 30px;
+    border: none;
+    border-radius: 4px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.daraz-btn-primary {
+    background: #ff6b35;
+    color: white;
+}
+
+.daraz-btn-primary:hover {
+    background: #e55a2b;
+}
+
+.daraz-order-card {
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 15px;
+    transition: all 0.3s ease;
+}
+
+.daraz-order-card:hover {
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.daraz-order-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.daraz-order-id {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #333;
+}
+
+.daraz-order-date {
+    font-size: 0.75rem;
+    color: #6c757d;
+}
+
+.daraz-order-status {
+    display: inline-block;
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.daraz-status-pending { background: #fff3cd; color: #856404; }
+.daraz-status-processing { background: #cce5ff; color: #004085; }
+.daraz-status-shipped { background: #d4edda; color: #155724; }
+.daraz-status-delivered { background: #d1ecf1; color: #0c5460; }
+.daraz-status-cancelled { background: #f8d7da; color: #721c24; }
+
+.daraz-order-total {
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: #ff6b35;
+}
+
+.daraz-empty-state {
+    text-align: center;
+    padding: 60px 20px;
+}
+
+.daraz-empty-state i {
+    font-size: 4rem;
+    color: #dee2e6;
+    margin-bottom: 20px;
+}
+
+.daraz-empty-state h5 {
+    color: #6c757d;
+    margin-bottom: 10px;
+}
+
+.daraz-empty-state p {
+    color: #adb5bd;
+    margin-bottom: 20px;
+}
+</style>
+
+<div class="daraz-profile-container">
+    <div class="container">
+        <div class="row">
+            <!-- Sidebar -->
+            <div class="col-lg-3">
+                <div class="daraz-profile-sidebar">
+                    <div class="daraz-profile-avatar">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div class="daraz-profile-name">{{ current_user.name }}</div>
+                    <div class="daraz-profile-email">{{ current_user.email }}</div>
+                    
+                    <ul class="daraz-profile-menu">
+                        <li><a href="#profile" class="active"><i class="fas fa-user"></i> My Profile</a></li>
+                        {% if current_user.role == 'seller' %}
+                            <li><a href="{{ url_for('seller_dashboard') }}"><i class="fas fa-store"></i> Seller Dashboard</a></li>
+                        {% endif %}
+                        <li><a href="{{ url_for('track_order') }}"><i class="fas fa-shipping-fast"></i> Track Order</a></li>
+                        <li><a href="#orders"><i class="fas fa-shopping-bag"></i> My Orders</a></li>
+                        <li><a href="#reviews"><i class="fas fa-star"></i> My Reviews</a></li>
+                        <li><a href="#wishlist"><i class="fas fa-heart"></i> Wishlist</a></li>
+                        <li><a href="{{ url_for('logout') }}"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <!-- Main Content -->
+            <div class="col-lg-9">
+                <!-- Profile Information -->
+                <div class="daraz-profile-content mb-4">
+                    <h4 class="daraz-section-title">Profile Information</h4>
+                    <form method="POST" action="{{ url_for('update_profile') }}">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="daraz-form-group">
+                                    <label class="daraz-form-label">Full Name</label>
+                                    <input type="text" name="name" class="daraz-form-control" value="{{ current_user.name }}" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="daraz-form-group">
+                                    <label class="daraz-form-label">Email Address</label>
+                                    <input type="email" class="daraz-form-control" value="{{ current_user.email }}" readonly>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="daraz-form-group">
+                                    <label class="daraz-form-label">Phone Number</label>
+                                    <input type="tel" name="phone" class="daraz-form-control" value="{{ current_user.phone or '' }}" placeholder="+880 1XXX XXXXXX">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="daraz-form-group">
+                                    <label class="daraz-form-label">Address</label>
+                                    <input type="text" name="address" class="daraz-form-control" value="{{ current_user.address or '' }}" placeholder="Your address">
+                                </div>
+                            </div>
+                        </div>
+                        <button type="submit" class="daraz-btn daraz-btn-primary">
+                            <i class="fas fa-save me-2"></i>Save Changes
+                        </button>
+                    </form>
+                </div>
+                
+                {% if current_user.role != 'seller' %}
+                <!-- Become a Seller Teaser -->
+                <div class="card border-0 shadow-sm rounded-4 overflow-hidden mb-4 p-4 mt-4 bg-primary text-white">
+                    <div class="row align-items-center">
+                        <div class="col-md-8">
+                            <h4 class="fw-bold mb-2">Want to sell on Lifestyle Mart?</h4>
+                            <p class="mb-0 text-white-50">Join our growing community of successful sellers and reach millions of customers across Bangladesh.</p>
+                        </div>
+                        <div class="col-md-4 text-md-end mt-3 mt-md-0">
+                            <a href="{{ url_for('become_seller') }}" class="btn btn-light fw-bold px-4 py-2">
+                                <i class="fas fa-rocket me-2"></i>Apply Now
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                {% else %}
+                <!-- Shop Settings (for Sellers) -->
+                <div class="daraz-profile-content mb-4 mt-4">
+                    <h4 class="daraz-section-title">Shop Settings</h4>
+                    <form method="POST" action="{{ url_for('update_profile') }}">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="daraz-form-group">
+                                    <label class="daraz-form-label">Shop Name</label>
+                                    <input type="text" name="shop_name" class="daraz-form-control" value="{{ current_user.shop_name or '' }}" placeholder="Enter your shop name">
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="daraz-form-group">
+                                    <label class="daraz-form-label">Shop Description</label>
+                                    <textarea name="shop_description" class="daraz-form-control" rows="3" placeholder="Describe what you sell...">{{ current_user.shop_description or '' }}</textarea>
+                                </div>
+                            </div>
+                        </div>
+                        <button type="submit" class="daraz-btn daraz-btn-primary">
+                            <i class="fas fa-store me-2"></i>Update Shop
+                        </button>
+                    </form>
+                </div>
+                {% endif %}
+
+                
+                <!-- My Orders -->
+                <div class="daraz-profile-content" id="orders">
+                    <h4 class="daraz-section-title">My Orders</h4>
+                    {% if orders %}
+                        {% for order in orders %}
+                        <div class="daraz-order-card">
+                            <div class="daraz-order-header">
+                                <div>
+                                    <div class="daraz-order-id">📦 {{ order.order_number }}</div>
+                                    <div class="daraz-order-date">{{ order.created_at.strftime('%d %b %Y, %I:%M %p') }}</div>
+                                </div>
+                                <div class="d-flex flex-column align-items-end gap-1">
+                                    <span class="daraz-order-status daraz-status-{{ order.status.lower() }}">{{ order.status.title() }}</span>
+                                    {% if order.payment_status == 'paid' %}
+                                        <span style="font-size:0.7rem; background:#d4edda; color:#155724; padding:3px 10px; border-radius:20px; font-weight:700;"><i class="fas fa-check-circle me-1"></i>Paid</span>
+                                    {% elif order.payment_status == 'pending' %}
+                                        <span style="font-size:0.7rem; background:#fff3cd; color:#856404; padding:3px 10px; border-radius:20px; font-weight:700;"><i class="fas fa-clock me-1"></i>Payment Pending</span>
+                                    {% elif order.payment_status == 'failed' %}
+                                        <span style="font-size:0.7rem; background:#f8d7da; color:#721c24; padding:3px 10px; border-radius:20px; font-weight:700;"><i class="fas fa-times-circle me-1"></i>Payment Failed</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <i class="fas fa-box me-2 text-muted"></i>
+                                    <span class="text-muted">{{ order.order_items|length }} item{{ 's' if order.order_items|length != 1 else '' }}</span>
+                                    <span class="text-muted ms-3">
+                                        {% if order.payment_method == 'cod' %}<i class="fas fa-money-bill-wave me-1"></i>COD
+                                        {% elif order.payment_method == 'bkash' %}<i class="fas fa-mobile-alt me-1"></i>bKash
+                                        {% elif order.payment_method == 'card' %}<i class="fas fa-credit-card me-1"></i>Card
+                                        {% else %}<i class="fas fa-wallet me-1"></i>{{ order.payment_method|title }}{% endif %}
+                                    </span>
+                                </div>
+                                <div class="daraz-order-total">৳{{ "%.0f"|format(order.total_amount) }}</div>
+                            </div>
+                            <div class="mt-3 d-flex gap-2 flex-wrap">
+                                <a href="{{ url_for('order_confirmation', id=order.id) }}" class="daraz-btn daraz-btn-primary">
+                                    <i class="fas fa-eye me-1"></i>View Details
+                                </a>
+                                {% if order.order_items[0].product.seller_id %}
+                                <a href="{{ url_for('chat', user_id=order.order_items[0].product.seller_id) }}" class="daraz-btn" style="background:#fff3cd; color:#856404; border:1px solid #ffeeba;">
+                                    <i class="fas fa-comment-dots me-1"></i>Message Seller
+                                </a>
+                                {% endif %}
+                                <a href="{{ url_for('track_order') }}" class="daraz-btn" style="background:#f5f5f5; color:#333; border:1px solid #ddd;">
+                                    <i class="fas fa-shipping-fast me-1"></i>Track Order
+                                </a>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    {% else %}
+                        <div class="daraz-empty-state">
+                            <i class="fas fa-shopping-bag"></i>
+                            <h5>No orders yet</h5>
+                            <p>You haven't placed any orders yet.</p>
+                            <a href="{{ url_for('shop') }}" class="daraz-btn daraz-btn-primary">Start Shopping</a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

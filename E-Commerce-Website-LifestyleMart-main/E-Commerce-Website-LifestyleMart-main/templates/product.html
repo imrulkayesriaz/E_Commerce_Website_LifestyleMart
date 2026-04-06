@@ -1,0 +1,454 @@
+{% extends "base.html" %}
+
+{% block title %}{{ product.name }} - LIFESTYLE MART{% endblock %}
+
+{% block content %}
+<style>
+.product-detail-container {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+    padding: 30px;
+    margin-top: 30px;
+}
+
+.product-images {
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.main-image {
+    width: 100%;
+    height: 400px;
+    object-fit: cover;
+    border-radius: 8px;
+}
+
+.thumbnail {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.thumbnail:hover {
+    transform: scale(1.05);
+    border: 2px solid var(--primary-color);
+}
+
+.product-info h1 {
+    color: var(--text-dark);
+    font-weight: 700;
+    margin-bottom: 20px;
+}
+
+.product-price {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--primary-color);
+    margin-bottom: 20px;
+}
+
+.original-price {
+    font-size: 1.2rem;
+    color: var(--text-light);
+    text-decoration: line-through;
+    margin-left: 15px;
+}
+
+.product-rating {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.stars {
+    color: #ffc107;
+    font-size: 1.2rem;
+}
+
+.rating-count {
+    color: var(--text-light);
+}
+
+.product-description {
+    color: var(--text-dark);
+    line-height: 1.6;
+    margin-bottom: 30px;
+}
+
+.quantity-selector {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 30px;
+}
+
+.quantity-btn {
+    width: 40px;
+    height: 40px;
+    border: 2px solid var(--border-color);
+    background: white;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.quantity-btn:hover {
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+}
+
+.quantity-input {
+    width: 60px;
+    text-align: center;
+    border: 2px solid var(--border-color);
+    border-radius: 6px;
+    padding: 8px;
+}
+
+.action-buttons {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 30px;
+}
+
+.btn-add-cart {
+    background: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 15px 30px;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 1.1rem;
+    transition: all 0.3s ease;
+    flex: 1;
+}
+
+.btn-add-cart:hover {
+    background: var(--accent-color);
+    transform: translateY(-2px);
+}
+
+.btn-wishlist {
+    background: white;
+    color: var(--primary-color);
+    border: 2px solid var(--primary-color);
+    padding: 15px 20px;
+    border-radius: 8px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.btn-wishlist:hover {
+    background: var(--primary-color);
+    color: white;
+}
+
+.product-features {
+    background: var(--bg-light);
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 30px;
+}
+
+.feature-item {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 15px;
+}
+
+.feature-icon {
+    width: 40px;
+    height: 40px;
+    background: var(--primary-color);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+}
+
+.reviews-section {
+    margin-top: 40px;
+}
+
+.review-form {
+    background: var(--bg-light);
+    border-radius: 8px;
+    padding: 25px;
+    margin-bottom: 30px;
+}
+
+.review-item {
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 15px;
+}
+
+.review-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.reviewer-info {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.reviewer-avatar {
+    width: 50px;
+    height: 50px;
+    background: var(--primary-color);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: 700;
+}
+
+.review-date {
+    color: var(--text-light);
+    font-size: 0.9rem;
+}
+
+.review-text {
+    color: var(--text-dark);
+    line-height: 1.5;
+}
+</style>
+
+<div class="container">
+    <div class="product-detail-container">
+        <div class="row">
+            <!-- Product Images -->
+            <div class="col-lg-6">
+                <div class="product-images">
+                    <img src="{{ product.image or 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80' }}" 
+                         alt="{{ product.name }}" class="main-image" id="mainImage">
+                    
+                    <div class="d-flex gap-3 mt-3">
+                        <img src="{{ product.image or 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80' }}" 
+                             alt="{{ product.name }}" class="thumbnail" onclick="changeImage(this.src)">
+                        <img src="{{ product.image or 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80' }}" 
+                             alt="{{ product.name }}" class="thumbnail" onclick="changeImage(this.src)">
+                        <img src="{{ product.image or 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80' }}" 
+                             alt="{{ product.name }}" class="thumbnail" onclick="changeImage(this.src)">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Product Info -->
+            <div class="col-lg-6">
+                <div class="product-info">
+                    <h1>{{ product.name }}</h1>
+                    
+                    <div class="product-price">
+                        ৳{{ "%.2f"|format(product.price) }}
+                        {% if product.discount %}
+                        <span class="original-price">৳{{ "%.2f"|format(product.price * 1.25) }}</span>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="product-rating">
+                        <div class="stars">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star-half-alt"></i>
+                        </div>
+                        <span class="rating-count">4.5 ({{ product.reviews|length }} reviews)</span>
+                    </div>
+                    
+                    <div class="product-description">
+                        <p>{{ product.description or 'High-quality product from Lifestyle Mart. Perfect for your everyday needs with premium materials and excellent craftsmanship.' }}</p>
+                    </div>
+                    
+                    <div class="quantity-selector">
+                        <label class="form-label">Quantity:</label>
+                        <button class="quantity-btn" onclick="changeQuantity(-1)">-</button>
+                        <input type="number" class="quantity-input" id="quantity" value="1" min="1" max="10">
+                        <button class="quantity-btn" onclick="changeQuantity(1)">+</button>
+                    </div>
+                    
+                    <div class="action-buttons">
+                        <form action="{{ url_for('add_to_cart') }}" method="POST" class="d-flex flex-grow-1">
+                            <input type="hidden" name="product_id" value="{{ product.id }}">
+                            <input type="hidden" name="quantity" id="cartQuantity" value="1">
+                            <button type="submit" class="btn-add-cart">
+                                <i class="fas fa-shopping-cart me-2"></i>Add to Cart
+                            </button>
+                        </form>
+                        <button class="btn-wishlist">
+                            <i class="fas fa-heart"></i>
+                        </button>
+                    </div>
+
+                    <!-- Seller Info -->
+                    <div class="card border-0 bg-light p-3 mb-4 rounded-3 border-start border-primary border-4">
+                        <div class="d-flex align-items-center">
+                            <div class="me-3">
+                                <i class="fas fa-store fa-2x text-primary border p-2 rounded-circle bg-white"></i>
+                            </div>
+                            <div>
+                                <h6 class="mb-0 fw-bold">Sold by: {{ product.seller.shop_name if product.seller and product.seller.shop_name else 'Lifestyle Mart Official' }}</h6>
+                                <p class="mb-0 small text-muted">Verified Seller since {{ product.seller.created_at.strftime('%Y') if product.seller else '2024' }}</p>
+                            </div>
+                            <div class="ms-auto d-flex gap-2">
+                                <a href="{{ url_for('chat', user_id=product.seller_id) if product.seller_id else '#' }}" class="btn btn-primary btn-sm rounded-pill px-3">
+                                    <i class="fas fa-comment-dots me-1"></i>Chat
+                                </a>
+                                <a href="#" class="btn btn-outline-primary btn-sm rounded-pill px-3">Visit Store</a>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="product-features">
+                        <div class="feature-item">
+                            <div class="feature-icon">
+                                <i class="fas fa-truck"></i>
+                            </div>
+                            <div>
+                                <h6 class="mb-1">Free Delivery</h6>
+                                <small class="text-muted">On orders over ৳500</small>
+                            </div>
+                        </div>
+                        <div class="feature-item">
+                            <div class="feature-icon">
+                                <i class="fas fa-shield-alt"></i>
+                            </div>
+                            <div>
+                                <h6 class="mb-1">Secure Payment</h6>
+                                <small class="text-muted">100% secure transactions</small>
+                            </div>
+                        </div>
+                        <div class="feature-item">
+                            <div class="feature-icon">
+                                <i class="fas fa-undo"></i>
+                            </div>
+                            <div>
+                                <h6 class="mb-1">Easy Returns</h6>
+                                <small class="text-muted">7 days return policy</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Reviews Section -->
+        <div class="reviews-section">
+            <h3 class="mb-4">Customer Reviews</h3>
+            
+            {% if current_user.is_authenticated %}
+            <div class="review-form">
+                <h5 class="mb-3">Write a Review</h5>
+                <form action="{{ url_for('add_review', product_id=product.id) }}" method="POST">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Rating</label>
+                            <select name="rating" class="form-select" required>
+                                <option value="">Select Rating</option>
+                                <option value="5">5 Stars - Excellent</option>
+                                <option value="4">4 Stars - Very Good</option>
+                                <option value="3">3 Stars - Good</option>
+                                <option value="2">2 Stars - Fair</option>
+                                <option value="1">1 Star - Poor</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Your Review</label>
+                        <textarea name="review_text" class="form-control" rows="4" 
+                                  placeholder="Share your experience with this product..." required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-star me-2"></i>Submit Review
+                    </button>
+                </form>
+            </div>
+            {% endif %}
+            
+            <!-- Existing Reviews -->
+            {% if product.reviews %}
+                {% for review in product.reviews %}
+                <div class="review-item">
+                    <div class="review-header">
+                        <div class="reviewer-info">
+                            <div class="reviewer-avatar">
+                                {{ review.user.name[0].upper() if review.user.name else 'U' }}
+                            </div>
+                            <div>
+                                <div class="d-flex align-items-center gap-2">
+                                    <h6 class="mb-0">{{ review.user.name }}</h6>
+                                    {% if current_user.is_authenticated and current_user.id != review.user_id %}
+                                    <a href="{{ url_for('chat', user_id=review.user_id) }}" class="text-primary" title="Message user">
+                                        <i class="fas fa-comment-dots"></i>
+                                    </a>
+                                    {% endif %}
+                                </div>
+                                <div class="stars">
+                                    {% for i in range(5) %}
+                                        {% if i < review.rating %}
+                                        <i class="fas fa-star"></i>
+                                        {% else %}
+                                        <i class="far fa-star"></i>
+                                        {% endif %}
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="review-date">
+                            {{ review.created_at.strftime('%d %b %Y') }}
+                        </div>
+                    </div>
+                    <div class="review-text">
+                        {{ review.review_text }}
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <div class="text-center py-5">
+                    <i class="fas fa-star fa-3x text-muted mb-3"></i>
+                    <h5>No reviews yet</h5>
+                    <p class="text-muted">Be the first to review this product!</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<script>
+function changeImage(src) {
+    document.getElementById('mainImage').src = src;
+}
+
+function changeQuantity(change) {
+    const input = document.getElementById('quantity');
+    const newValue = parseInt(input.value) + change;
+    
+    if (newValue >= 1 && newValue <= 10) {
+        input.value = newValue;
+        document.getElementById('cartQuantity').value = newValue;
+    }
+}
+
+// Update cart quantity when input changes
+document.getElementById('quantity').addEventListener('change', function() {
+    document.getElementById('cartQuantity').value = this.value;
+});
+</script>
+{% endblock %}

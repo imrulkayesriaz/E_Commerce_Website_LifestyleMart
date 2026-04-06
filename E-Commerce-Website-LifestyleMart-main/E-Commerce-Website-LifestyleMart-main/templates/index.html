@@ -1,0 +1,633 @@
+{% extends "base.html" %}
+
+{% block title %}LIFESTYLE MART - Bangladesh's Premier Online Shopping{% endblock %}
+
+{% block content %}
+<style>
+/* Daraz-style Homepage */
+.daraz-hero {
+    background: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%);
+    padding: 60px 0;
+    text-align: center;
+    color: white;
+}
+
+.daraz-hero h1 {
+    font-size: 3rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+}
+
+.daraz-hero .lead {
+    font-size: 1.25rem;
+    margin-bottom: 2rem;
+}
+
+.daraz-btn {
+    padding: 12px 30px;
+    border: none;
+    border-radius: 4px;
+    font-size: 1rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    display: inline-block;
+    margin: 5px;
+}
+
+.daraz-btn-primary {
+    background: #ff6b35;
+    color: white;
+}
+
+.daraz-btn-outline {
+    background: transparent;
+    color: white;
+    border: 2px solid white;
+}
+
+.daraz-section {
+    background: white;
+    padding: 40px 0;
+    margin-bottom: 30px;
+}
+
+.daraz-section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding: 0 20px;
+}
+
+.daraz-section-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #333;
+    margin: 0;
+}
+
+.daraz-view-all {
+    color: #ff6b35;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.875rem;
+}
+
+.daraz-flash-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+    padding: 0 20px;
+}
+
+.daraz-flash-card {
+    background: white;
+    border: 1px solid #f0f0f0;
+    border-radius: 8px;
+    overflow: hidden;
+    transition: transform 0.3s ease;
+    text-align: center;
+    padding: 15px;
+}
+
+.daraz-flash-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+.daraz-flash-card img {
+    width: 100%;
+    height: 150px;
+    object-fit: cover;
+    border-radius: 6px;
+    margin-bottom: 10px;
+}
+
+.daraz-original-price {
+    text-decoration: line-through;
+    color: #6c757d;
+    font-size: 0.875rem;
+}
+
+.daraz-discount-price {
+    color: #dc3545;
+    font-size: 1.25rem;
+    font-weight: 700;
+}
+
+.daraz-categories-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 20px;
+    padding: 0 20px;
+}
+
+.daraz-category-card {
+    background: white;
+    border: 1px solid #f0f0f0;
+    border-radius: 8px;
+    padding: 20px;
+    text-align: center;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    color: inherit;
+}
+
+.daraz-category-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+.daraz-category-icon {
+    width: 60px;
+    height: 60px;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 15px;
+    font-size: 1.5rem;
+    color: #6c757d;
+}
+
+.daraz-products-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 20px;
+    padding: 0 20px;
+}
+
+.daraz-product-card {
+    background: white;
+    border: 1px solid #f0f0f0;
+    border-radius: 8px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.daraz-product-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+.daraz-product-image img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+}
+
+.daraz-product-info {
+    padding: 15px;
+}
+
+.daraz-product-title {
+    font-size: 0.875rem;
+    font-weight: 600;
+    margin: 0 0 5px 0;
+    color: #333;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+}
+
+.daraz-product-price {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #ff6b35;
+}
+
+.daraz-stars {
+    color: #ffc107;
+    font-size: 0.875rem;
+}
+
+.daraz-btn-cart {
+    background: #ff6b35;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    cursor: pointer;
+    width: 100%;
+}
+
+.daraz-eco-badge {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: #28a745;
+    color: white;
+    padding: 3px 12px;
+    border-radius: 50px;
+    font-size: 0.75rem;
+    font-weight: bold;
+    z-index: 10;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+</style>
+
+<!-- Hero Section -->
+<section class="daraz-hero">
+    <div class="container">
+        <h1>Fashion & Lifestyle</h1>
+        <p class="lead">Up to 70% off on fashion, beauty, home & more</p>
+        <div>
+            <a href="{{ url_for('shop') }}" class="daraz-btn daraz-btn-primary">Shop Now</a>
+            <a href="#categories" class="daraz-btn daraz-btn-outline">View Categories</a>
+        </div>
+    </div>
+</section>
+
+<!-- Flash Deals Section -->
+<section class="daraz-section">
+    <div class="container">
+        <div class="daraz-section-header">
+            <h2 class="daraz-section-title"><i class="fas fa-bolt" style="color: #f85606;"></i> Flash Deals</h2>
+            <a href="{{ url_for('shop') }}" class="daraz-view-all">View All</a>
+        </div>
+        <div class="daraz-flash-grid">
+            {% for deal in flash_deals %}
+            <div class="daraz-flash-card">
+                <a href="{{ url_for('product_detail', id=deal.product.id) }}">
+                    <img src="{{ deal.product.image }}" alt="{{ deal.product.name }}" loading="lazy">
+                    <h6>{{ deal.product.name }}</h6>
+                    <span class="daraz-original-price">৳{{ "%.0f"|format(deal.original_price) }}</span>
+                    <div class="daraz-discount-price">৳{{ "%.0f"|format(deal.deal_price) }}</div>
+                    <div class="daraz-discount-badge">-{{ deal.discount_percent }}%</div>
+                </a>
+            </div>
+            {% else %}
+            <div class="daraz-flash-card">
+                <img src="https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80" alt="Premium Cotton T-Shirt">
+                <h6>Premium Cotton T-Shirt</h6>
+                <span class="daraz-original-price">৳1,200</span>
+                <div class="daraz-discount-price">৳840</div>
+                <div class="daraz-discount-badge">-30%</div>
+            </div>
+            <div class="daraz-flash-card">
+                <img src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80" alt="Red Running Shoes">
+                <h6>Red Running Shoes</h6>
+                <span class="daraz-original-price">৳3,500</span>
+                <div class="daraz-discount-price">৳2,800</div>
+                <div class="daraz-discount-badge">-20%</div>
+            </div>
+            <div class="daraz-flash-card">
+                <img src="https://images.unsplash.com/photo-1594938298603-c8148c4dae35?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80" alt="Leather Handbag">
+                <h6>Leather Handbag</h6>
+                <span class="daraz-original-price">৳4,200</span>
+                <div class="daraz-discount-price">৳3,150</div>
+                <div class="daraz-discount-badge">-25%</div>
+            </div>
+            <div class="daraz-flash-card">
+                <img src="https://images.unsplash.com/photo-1543163521-1bf539c55dd2?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80" alt="Women's Heels">
+                <h6>Women's Heels</h6>
+                <span class="daraz-original-price">৳2,800</span>
+                <div class="daraz-discount-price">৳1,820</div>
+                <div class="daraz-discount-badge">-35%</div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- Categories Section -->
+<section class="daraz-section" id="categories">
+    <div class="container">
+        <div class="daraz-section-header">
+            <h2 class="daraz-section-title">Shop by Category</h2>
+            <a href="{{ url_for('shop') }}" class="daraz-view-all">View All</a>
+        </div>
+        <div class="daraz-categories-grid">
+            <a href="{{ url_for('shop') }}" class="daraz-category-card">
+                <div class="daraz-category-icon"><i class="fas fa-tshirt"></i></div>
+                <h6>Men's Fashion</h6>
+            </a>
+            <a href="{{ url_for('shop') }}" class="daraz-category-card">
+                <div class="daraz-category-icon"><i class="fas fa-female"></i></div>
+                <h6>Women's Fashion</h6>
+            </a>
+            <a href="{{ url_for('shop') }}" class="daraz-category-card">
+                <div class="daraz-category-icon"><i class="fas fa-shoe-prints"></i></div>
+                <h6>Shoes</h6>
+            </a>
+            <a href="{{ url_for('shop') }}" class="daraz-category-card">
+                <div class="daraz-category-icon"><i class="fas fa-shopping-bag"></i></div>
+                <h6>Accessories</h6>
+            </a>
+            <a href="{{ url_for('shop') }}" class="daraz-category-card">
+                <div class="daraz-category-icon"><i class="fas fa-spa"></i></div>
+                <h6>Beauty & Personal Care</h6>
+            </a>
+            <a href="{{ url_for('shop') }}" class="daraz-category-card">
+                <div class="daraz-category-icon"><i class="fas fa-couch"></i></div>
+                <h6>Home & Living</h6>
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- BD Brands Spotlight Section -->
+<section class="daraz-section bg-light py-5">
+    <div class="container">
+        <div class="daraz-section-header mb-4">
+            <h2 class="daraz-section-title">
+                <i class="fas fa-star text-success me-2"></i>BD Brands Spotlight
+            </h2>
+            <a href="{{ url_for('shop') }}?search=brand" class="daraz-view-all">Support Local Brands</a>
+        </div>
+        <div class="row align-items-center mb-4 text-center">
+            <div class="col-12">
+                <p class="text-muted">Discover premium quality products from Bangladesh's top national brands.</p>
+            </div>
+            <div class="col-12 d-flex justify-content-center gap-4 flex-wrap mt-3">
+                <a href="{{ url_for('shop', brand='Aarong') }}" class="badge bg-white text-dark border p-3 rounded shadow-sm fw-bold fs-6 text-decoration-none">Aarong</a>
+                <a href="{{ url_for('shop', brand='Apex') }}" class="badge bg-white text-dark border p-3 rounded shadow-sm fw-bold fs-6 text-decoration-none">Apex</a>
+                <a href="{{ url_for('shop', brand='Yellow') }}" class="badge bg-white text-dark border p-3 rounded shadow-sm fw-bold fs-6 text-decoration-none">Yellow</a>
+                <a href="{{ url_for('shop', brand='Walton') }}" class="badge bg-white text-dark border p-3 rounded shadow-sm fw-bold fs-6 text-decoration-none">Walton</a>
+                <a href="{{ url_for('shop', brand='Le Reve') }}" class="badge bg-white text-dark border p-3 rounded shadow-sm fw-bold fs-6 text-decoration-none">Le Reve</a>
+            </div>
+        </div>
+        
+        <div class="daraz-products-grid">
+            {% set bd_count = namespace(value=0) %}
+            {% for product in products %}
+                {% if product.brand in ['Aarong', 'Apex', 'Yellow', 'Walton', 'Le Reve'] %}
+                    {% if bd_count.value < 4 %}
+            <div class="daraz-product-card position-relative">
+                <span class="position-absolute top-0 end-0 bg-danger text-white px-2 py-1 m-2 rounded small fw-bold shadow-sm" style="z-index:10;"><i class="fas fa-tag me-1"></i>PROMO: LIFESTYLE50</span>
+                <div class="daraz-product-image position-relative">
+                    <span class="position-absolute top-0 start-0 bg-success text-white px-2 py-1 m-2 rounded small" style="z-index:10;"><i class="fas fa-check-circle me-1"></i>{{ product.brand|default('Local Brand') }}</span>
+                    <img src="{{ product.image or 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80' }}" alt="{{ product.name }}">
+                </div>
+                <div class="daraz-product-info">
+                    <h6 class="daraz-product-title">{{ product.name }}</h6>
+                    <div class="daraz-product-price">৳{{ "%.0f"|format(product.price) }}</div>
+                    <div class="daraz-stars">
+                        <i class="fas fa-star text-warning"></i><i class="fas fa-star text-warning"></i><i class="fas fa-star text-warning"></i><i class="fas fa-star text-warning"></i><i class="far fa-star text-warning"></i>
+                    </div>
+                    <form action="{{ url_for('add_to_cart') }}" method="POST">
+                        <input type="hidden" name="product_id" value="{{ product.id }}">
+                        <input type="hidden" name="quantity" value="1">
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="daraz-btn-cart">Add to Cart</button>
+                            {% if product.brand and brand_seller_ids.get(product.brand) %}
+                            <a href="{{ url_for('chat', user_id=brand_seller_ids.get(product.brand)) }}" class="btn btn-outline-primary btn-sm rounded-pill py-2">
+                                <i class="fas fa-comment-dots me-1"></i>Message {{ product.brand }}
+                            </a>
+                            {% endif %}
+                        </div>
+                    </form>
+                </div>
+            </div>
+                    {% set bd_count.value = bd_count.value + 1 %}
+                    {% endif %}
+                {% endif %}
+            {% endfor %}
+            
+            {% if bd_count.value < 1 %}
+            <!-- Placeholder 1: Aarong -->
+            <div class="daraz-product-card position-relative">
+                <span class="position-absolute top-0 end-0 bg-danger text-white px-2 py-1 m-2 rounded small fw-bold shadow-sm" style="z-index:10;"><i class="fas fa-tag me-1"></i>USE: LIFESTYLE50</span>
+                <div class="daraz-product-image position-relative">
+                    <span class="position-absolute top-0 start-0 bg-success text-white px-2 py-1 m-2 rounded small" style="z-index:10;"><i class="fas fa-check-circle me-1"></i>Aarong</span>
+                    <img src="https://images.unsplash.com/photo-1708534246055-d7b149acb731?q=80&w=800&auto=format&fit=crop" alt="Traditional Kurti">
+                </div>
+                <div class="daraz-product-info">
+                    <h6 class="daraz-product-title">Aarong Cotton Kurti</h6>
+                    <div class="daraz-product-price">৳2,200</div>
+                    <div class="daraz-stars"><i class="fas fa-star text-warning"></i><i class="fas fa-star text-warning"></i><i class="fas fa-star text-warning"></i><i class="fas fa-star text-warning"></i><i class="fas fa-star-half-alt text-warning"></i></div>
+                    <div class="d-grid gap-2">
+                        <a href="{{ url_for('shop', brand='Aarong') }}" class="daraz-btn-cart text-center text-decoration-none d-block">View Product</a>
+                        {% if brand_seller_ids.get('Aarong') %}
+                        <a href="{{ url_for('chat', user_id=brand_seller_ids.get('Aarong')) }}" class="btn btn-outline-primary btn-sm rounded-pill py-2">
+                            <i class="fas fa-comment-dots me-1"></i>Message Aarong
+                        </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% set bd_count.value = bd_count.value + 1 %}
+            {% endif %}
+
+            {% if bd_count.value < 2 %}
+            <!-- Placeholder 2: Apex -->
+            <div class="daraz-product-card position-relative">
+                <span class="position-absolute top-0 end-0 bg-danger text-white px-2 py-1 m-2 rounded small fw-bold shadow-sm" style="z-index:10;"><i class="fas fa-tag me-1"></i>USE: LIFESTYLE50</span>
+                <div class="daraz-product-image position-relative">
+                    <span class="position-absolute top-0 start-0 bg-success text-white px-2 py-1 m-2 rounded small" style="z-index:10;"><i class="fas fa-check-circle me-1"></i>Apex</span>
+                    <img src="https://images.unsplash.com/photo-1677203006929-fd0d9f4f350d?q=80&w=800&auto=format&fit=crop" alt="Leather Shoes">
+                </div>
+                <div class="daraz-product-info">
+                    <h6 class="daraz-product-title">Apex Premium Leather Oxfords</h6>
+                    <div class="daraz-product-price">৳4,500</div>
+                    <div class="daraz-stars"><i class="fas fa-star text-warning"></i><i class="fas fa-star text-warning"></i><i class="fas fa-star text-warning"></i><i class="fas fa-star text-warning"></i><i class="fas fa-star text-warning"></i></div>
+                    <div class="d-grid gap-2">
+                        <a href="{{ url_for('shop', brand='Apex') }}" class="daraz-btn-cart text-center text-decoration-none d-block">View Product</a>
+                        {% if brand_seller_ids.get('Apex') %}
+                        <a href="{{ url_for('chat', user_id=brand_seller_ids.get('Apex')) }}" class="btn btn-outline-primary btn-sm rounded-pill py-2">
+                            <i class="fas fa-comment-dots me-1"></i>Message Apex
+                        </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% set bd_count.value = bd_count.value + 1 %}
+            {% endif %}
+
+            {% if bd_count.value < 3 %}
+            <!-- Placeholder 3: Yellow -->
+            <div class="daraz-product-card position-relative">
+                <span class="position-absolute top-0 end-0 bg-danger text-white px-2 py-1 m-2 rounded small fw-bold shadow-sm" style="z-index:10;"><i class="fas fa-tag me-1"></i>USE: LIFESTYLE50</span>
+                <div class="daraz-product-image position-relative">
+                    <span class="position-absolute top-0 start-0 bg-success text-white px-2 py-1 m-2 rounded small" style="z-index:10;"><i class="fas fa-check-circle me-1"></i>Yellow</span>
+                    <img src="https://images.unsplash.com/photo-1581655353564-df123a1eb820?auto=format&fit=crop&w=800&q=80" alt="Casual Men's Shirt">
+                </div>
+                <div class="daraz-product-info">
+                    <h6 class="daraz-product-title">Yellow Men's Polo Shirt</h6>
+                    <div class="daraz-product-price">৳1,500</div>
+                    <div class="daraz-stars"><i class="fas fa-star text-warning"></i><i class="fas fa-star text-warning"></i><i class="fas fa-star text-warning"></i><i class="fas fa-star text-warning"></i><i class="far fa-star text-warning"></i></div>
+                    <div class="d-grid gap-2">
+                        <a href="{{ url_for('shop', brand='Yellow') }}" class="daraz-btn-cart text-center text-decoration-none d-block">View Product</a>
+                        {% if brand_seller_ids.get('Yellow') %}
+                        <a href="{{ url_for('chat', user_id=brand_seller_ids.get('Yellow')) }}" class="btn btn-outline-primary btn-sm rounded-pill py-2">
+                            <i class="fas fa-comment-dots me-1"></i>Message Yellow
+                        </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% set bd_count.value = bd_count.value + 1 %}
+            {% endif %}
+
+            {% if bd_count.value < 4 %}
+            <!-- Placeholder 4: Walton -->
+            <div class="daraz-product-card position-relative">
+                <span class="position-absolute top-0 end-0 bg-danger text-white px-2 py-1 m-2 rounded small fw-bold shadow-sm" style="z-index:10;"><i class="fas fa-tag me-1"></i>USE: LIFESTYLE50</span>
+                <div class="daraz-product-image position-relative">
+                    <span class="position-absolute top-0 start-0 bg-success text-white px-2 py-1 m-2 rounded small" style="z-index:10;"><i class="fas fa-check-circle me-1"></i>Walton</span>
+                    <img src="https://images.unsplash.com/photo-1579586337278-3befd40fd17a?auto=format&fit=crop&w=800&q=80" alt="Smartwatch">
+                </div>
+                <div class="daraz-product-info">
+                    <h6 class="daraz-product-title">Walton Tick Smartwatch</h6>
+                    <div class="daraz-product-price">৳3,200</div>
+                    <div class="daraz-stars"><i class="fas fa-star text-warning"></i><i class="fas fa-star text-warning"></i><i class="fas fa-star text-warning"></i><i class="fas fa-star text-warning"></i><i class="fas fa-star-half-alt text-warning"></i></div>
+                    <div class="d-grid gap-2">
+                        <a href="{{ url_for('shop', brand='Walton') }}" class="daraz-btn-cart text-center text-decoration-none d-block">View Product</a>
+                        {% if brand_seller_ids.get('Walton') %}
+                        <a href="{{ url_for('chat', user_id=brand_seller_ids.get('Walton')) }}" class="btn btn-outline-primary btn-sm rounded-pill py-2">
+                            <i class="fas fa-comment-dots me-1"></i>Message Walton
+                        </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% set bd_count.value = bd_count.value + 1 %}
+            {% endif %}
+        </div>
+    </div>
+</section>
+
+<!-- Green Choice Spotlight Section -->
+<section class="daraz-section" style="background: #f0fff1; border-top: 4px solid #28a745;">
+    <div class="container">
+        <div class="daraz-section-header">
+            <h2 class="daraz-section-title" style="color: #1a5928;">
+                <i class="fas fa-leaf text-success me-2"></i>Green Choice Spotlight
+            </h2>
+            <a href="{{ url_for('shop') }}?eco_friendly=1" class="daraz-view-all" style="color: #1a5928;">View Sustainable Collection</a>
+        </div>
+        <p class="px-3 text-muted">Ethically sourced, eco-friendly products for a better tomorrow.</p>
+        
+        <div class="daraz-products-grid">
+            {% for product in eco_products %}
+            <div class="daraz-product-card position-relative shadow-sm" style="border: 2px solid #e1f5e3;">
+                <div class="daraz-eco-badge"><i class="fas fa-leaf"></i> Eco</div>
+                <div class="daraz-product-image">
+                    <img src="{{ product.image or 'https://images.unsplash.com/photo-1542272604-787c3839105e?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80' }}" alt="{{ product.name }}">
+                </div>
+                <div class="daraz-product-info">
+                    <h6 class="daraz-product-title">{{ product.name }}</h6>
+                    <p class="small text-success mb-2"><i class="fas fa-certificate me-1"></i>{{ product.eco_description|default('Sustainably sourced product')|truncate(60) }}</p>
+                    <div class="daraz-product-price">৳{{ "%.0f"|format(product.price) }}</div>
+                    <form action="{{ url_for('add_to_cart') }}" method="POST">
+                        <input type="hidden" name="product_id" value="{{ product.id }}">
+                        <input type="hidden" name="quantity" value="1">
+                        <button type="submit" class="daraz-btn-cart" style="background: #28a745;">Add to Cart</button>
+                    </form>
+                </div>
+            </div>
+            {% endfor %}
+            
+            {% if eco_products|length == 0 %}
+            <div class="col-12 text-center py-4">
+                <p class="text-muted">No eco-friendly products available at the moment. Stay tuned!</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</section>
+
+<!-- Products Section -->
+<section class="daraz-section">
+    <div class="container">
+        <div class="daraz-section-header">
+            <h2 class="daraz-section-title">Popular Products</h2>
+            <a href="{{ url_for('shop') }}" class="daraz-view-all">View All</a>
+        </div>
+        <div class="daraz-products-grid">
+            {% for product in products[:8] if products %}
+            <div class="daraz-product-card">
+                <div class="daraz-product-image">
+                    <img src="{{ product.image or 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80' }}" alt="{{ product.name }}">
+                    {% if product.is_eco_friendly %}
+                    <div class="daraz-eco-badge" title="Sustainable Choice">
+                        <i class="fas fa-leaf"></i> Eco
+                    </div>
+                    {% endif %}
+                </div>
+                <div class="daraz-product-info">
+                    <h6 class="daraz-product-title">{{ product.name }}</h6>
+                    <div class="daraz-product-price">৳{{ "%.0f"|format(product.price) }}</div>
+                    <div class="daraz-stars">
+                        <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="far fa-star"></i>
+                    </div>
+                    <form action="{{ url_for('add_to_cart') }}" method="POST">
+                        <input type="hidden" name="product_id" value="{{ product.id }}">
+                        <input type="hidden" name="quantity" value="1">
+                        <button type="submit" class="daraz-btn-cart">Add to Cart</button>
+                    </form>
+                </div>
+            </div>
+            {% else %}
+            <div class="daraz-product-card">
+                <div class="daraz-product-image">
+                    <img src="https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="T-Shirt">
+                </div>
+                <div class="daraz-product-info">
+                    <h6 class="daraz-product-title">Premium Cotton T-Shirt</h6>
+                    <div class="daraz-product-price">৳1,200</div>
+                    <div class="daraz-stars"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="far fa-star"></i></div>
+                    <form action="{{ url_for('add_to_cart') }}" method="POST">
+                        <input type="hidden" name="product_id" value="1">
+                        <input type="hidden" name="quantity" value="1">
+                        <button type="submit" class="daraz-btn-cart">Add to Cart</button>
+                    </form>
+                </div>
+            </div>
+            <div class="daraz-product-card">
+                <div class="daraz-product-image">
+                    <img src="https://images.unsplash.com/photo-1542272604-787c3839105e?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Jeans">
+                </div>
+                <div class="daraz-product-info">
+                    <h6 class="daraz-product-title">Classic Denim Jeans</h6>
+                    <div class="daraz-product-price">৳2,500</div>
+                    <div class="daraz-stars"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
+                    <form action="{{ url_for('add_to_cart') }}" method="POST">
+                        <input type="hidden" name="product_id" value="2">
+                        <input type="hidden" name="quantity" value="1">
+                        <button type="submit" class="daraz-btn-cart">Add to Cart</button>
+                    </form>
+                </div>
+            </div>
+            <div class="daraz-product-card">
+                <div class="daraz-product-image">
+                    <img src="https://images.unsplash.com/photo-1515372039744-b8f02a3ae446?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Dress">
+                </div>
+                <div class="daraz-product-info">
+                    <h6 class="daraz-product-title">Elegant Summer Dress</h6>
+                    <div class="daraz-product-price">৳1,900</div>
+                    <div class="daraz-stars"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="far fa-star"></i></div>
+                    <form action="{{ url_for('add_to_cart') }}" method="POST">
+                        <input type="hidden" name="product_id" value="3">
+                        <input type="hidden" name="quantity" value="1">
+                        <button type="submit" class="daraz-btn-cart">Add to Cart</button>
+                    </form>
+                </div>
+            </div>
+            <div class="daraz-product-card">
+                <div class="daraz-product-image">
+                    <img src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Shoes">
+                </div>
+                <div class="daraz-product-info">
+                    <h6 class="daraz-product-title">Red Running Shoes</h6>
+                    <div class="daraz-product-price">৳3,500</div>
+                    <div class="daraz-stars"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
+                    <form action="{{ url_for('add_to_cart') }}" method="POST">
+                        <input type="hidden" name="product_id" value="4">
+                        <input type="hidden" name="quantity" value="1">
+                        <button type="submit" class="daraz-btn-cart">Add to Cart</button>
+                    </form>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endblock %}

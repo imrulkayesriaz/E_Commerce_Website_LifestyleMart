@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+
+{% block title %}{{ title }} - LIFESTYLE MART{% endblock %}
+
+{% block content %}
+<div class="container py-4 shadow-sm bg-white rounded">
+    <div class="row align-items-center mb-4">
+        <div class="col-md-8">
+            <h2 class="fw-bold mb-0">
+                <i class="fas fa-box-open text-primary me-2"></i>{{ title }}
+            </h2>
+            <p class="text-muted small mb-0">Fill in the details below to list your product for sale.</p>
+        </div>
+        <div class="col-md-4 text-end">
+            <a href="{{ url_for('seller_products') }}" class="btn btn-outline-secondary btn-sm">
+                <i class="fas fa-arrow-left me-2"></i>Back to Products
+            </a>
+        </div>
+    </div>
+
+    <form method="POST" class="row g-4 overflow-hidden p-3" enctype="multipart/form-data">
+        {{ form.hidden_tag() }}
+        
+        <!-- Left Column: Basic Info -->
+        <div class="col-lg-7">
+            <div class="card border-0 shadow-sm p-4">
+                <h5 class="fw-bold mb-4">Basic Information</h5>
+                <div class="mb-3">
+                    {{ form.name.label(class="form-label fw-semibold") }}
+                    {{ form.name(class="form-control", placeholder="e.g. Handmade Silk Saree", required=True) }}
+                    {% for error in form.name.errors %}<div class="text-danger small mt-1">{{ error }}</div>{% endfor %}
+                </div>
+                <div class="mb-3">
+                    {{ form.description.label(class="form-label fw-semibold") }}
+                    {{ form.description(class="form-control", rows="6", placeholder="Describe your product's unique features, materials, and size guide...") }}
+                    {% for error in form.description.errors %}<div class="text-danger small mt-1">{{ error }}</div>{% endfor %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Column: Settings & Pricing -->
+        <div class="col-lg-5">
+            <div class="card border-0 shadow-sm p-4 mb-4">
+                <h5 class="fw-bold mb-4">Pricing & Inventory</h5>
+                <div class="row g-3">
+                    <div class="col-md-6 mb-3">
+                        {{ form.price.label(class="form-label fw-semibold") }}
+                        <div class="input-group">
+                            <span class="input-group-text bg-light border-end-0">৳</span>
+                            {{ form.price(class="form-control border-start-0", placeholder="0.00", required=True) }}
+                        </div>
+                        {% for error in form.price.errors %}<div class="text-danger small mt-1">{{ error }}</div>{% endfor %}
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        {{ form.stock.label(class="form-label fw-semibold") }}
+                        {{ form.stock(class="form-control", placeholder="0", required=True) }}
+                        {% for error in form.stock.errors %}<div class="text-danger small mt-1">{{ error }}</div>{% endfor %}
+                    </div>
+                </div>
+                <div class="row g-3">
+                    <div class="col-md-6 mb-3">
+                        {{ form.category_id.label(class="form-label fw-semibold") }}
+                        {{ form.category_id(class="form-select", required=True) }}
+                        {% for error in form.category_id.errors %}<div class="text-danger small mt-1">{{ error }}</div>{% endfor %}
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        {{ form.brand.label(class="form-label fw-semibold") }}
+                        {{ form.brand(class="form-control", placeholder="e.g. MyBrand") }}
+                        {% for error in form.brand.errors %}<div class="text-danger small mt-1">{{ error }}</div>{% endfor %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="card border-0 shadow-sm p-4">
+                <h5 class="fw-bold mb-4">Visual Appearance</h5>
+                <div class="mb-3">
+                    {{ form.image.label(class="form-label fw-semibold") }}
+                    {{ form.image(class="form-control", placeholder="https://unsplash.com/your-image-url") }}
+                    <div class="form-text small">Enter an Unsplash image URL for high quality demo imagery.</div>
+                    {% for error in form.image.errors %}<div class="text-danger small mt-1">{{ error }}</div>{% endfor %}
+                </div>
+                <div class="d-grid mt-4">
+                    <button type="submit" class="btn btn-primary btn-lg shadow">
+                        <i class="fas fa-save me-2"></i>{{ 'Publish Product' if 'Add' in title else 'Save Changes' }}
+                    </button>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+{% endblock %}

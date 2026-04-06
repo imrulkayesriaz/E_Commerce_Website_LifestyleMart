@@ -1,0 +1,339 @@
+{% extends "base.html" %}
+
+{% block title %}Checkout - LIFESTYLE MART{% endblock %}
+
+{% block content %}
+<section class="py-4">
+    <div class="container">
+        <h1 class="mb-4">Checkout</h1>
+        
+        <div class="row">
+            <!-- Checkout Form -->
+            <div class="col-lg-8">
+                <form method="POST" id="checkoutForm">
+                    {{ form.hidden_tag() }}
+                    <input type="hidden" name="phone_number" value="{{ current_user.phone or '01700000000' }}">
+                    <div class="card border-0 shadow-sm mb-4">
+                        <div class="card-header bg-white">
+                            <h5 class="mb-0">Shipping Information</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="fullName" class="form-label">Full Name</label>
+                                    <input type="text" class="form-control" id="fullName" name="fullName" 
+                                           value="{{ current_user.name }}" required>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="phone" class="form-label">Phone Number</label>
+                                    <input type="tel" class="form-control" id="phone" name="phone" 
+                                           value="{{ current_user.phone or '' }}" required>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="email" class="form-label">Email Address</label>
+                                <input type="email" class="form-control" id="email" name="email" 
+                                       value="{{ current_user.email }}" required>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="shipping_address" class="form-label">Shipping Address</label>
+                                <textarea class="form-control" id="shipping_address" name="shipping_address" 
+                                          rows="3" required>{{ current_user.address or '' }}</textarea>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="sameAsBilling" checked>
+                                    <label class="form-check-label" for="sameAsBilling">
+                                        Billing address same as shipping
+                                    </label>
+                                </div>
+                            </div>
+                            
+                            <div id="billingAddress" style="display: none;">
+                                <div class="mb-3">
+                                    <label for="billing_address" class="form-label">Billing Address</label>
+                                    <textarea class="form-control" id="billing_address" name="billing_address" 
+                                              rows="3">{{ current_user.address or '' }}</textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="card border-0 shadow-sm mb-4">
+                        <div class="card-header bg-white">
+                            <h5 class="mb-0">Payment Method</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="form-check mb-2">
+                                <input class="form-check-input" type="radio" name="payment_method" 
+                                       id="cod" value="cod" checked>
+                                <label class="form-check-label" for="cod">
+                                    <i class="fas fa-money-bill-wave me-2"></i>Cash on Delivery
+                                </label>
+                            </div>
+                            <hr>
+                            <p class="text-muted small mb-2">Prepaid Options (via SSLCommerz):</p>
+                            <div class="form-check mb-2">
+                                <input class="form-check-input" type="radio" name="payment_method" 
+                                       id="bkash" value="bkash">
+                                <label class="form-check-label" for="bkash">
+                                    <i class="fas fa-mobile-alt me-2"></i>bKash / Nagad / Upay
+                                </label>
+                            </div>
+                            <div class="form-check mb-2">
+                                <input class="form-check-input" type="radio" name="payment_method" 
+                                       id="card" value="card">
+                                <label class="form-check-label" for="card">
+                                    <i class="fas fa-credit-card me-2"></i>Credit / Debit Card
+                                </label>
+                            </div>
+                            <div class="form-check mb-2">
+                                <input class="form-check-input" type="radio" name="payment_method" 
+                                       id="gift_card" value="gift_card">
+                                <label class="form-check-label" for="gift_card">
+                                    <i class="fas fa-gift me-2"></i>Gift Card
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Gift Card Details (shown when gift card is selected) -->
+                    <div id="gift_card_details" class="card mb-3" style="display: none;">
+                        <div class="card-header bg-success text-white">
+                            <h6 class="mb-0"><i class="fas fa-gift me-2"></i>Gift Card Details</h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="mb-3">
+                                <label for="gift_card_code" class="form-label">Gift Card Code</label>
+                                <input type="text" class="form-control" id="gift_card_code" name="gift_card_code" 
+                                       placeholder="Enter your gift card code">
+                                <small class="text-muted">Gift cards provide up to 10% discount (max ৳500)</small>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Delivery Options -->
+                    <div class="card mb-3">
+                        <div class="card-header bg-primary text-white">
+                            <h6 class="mb-0"><i class="fas fa-truck me-2"></i>Delivery Options</h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-check mb-3">
+                                        <input class="form-check-input" type="radio" name="delivery_type" 
+                                               id="standard_delivery" value="standard" checked>
+                                        <label class="form-check-label" for="standard_delivery">
+                                            <strong>Standard Delivery</strong>
+                                            <span class="text-success d-block">Free (3-5 business days)</span>
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="delivery_type" 
+                                               id="express_delivery" value="express">
+                                        <label class="form-check-label" for="express_delivery">
+                                            <strong>Express Delivery</strong>
+                                            <span class="text-warning d-block">৳100 (1-2 business days)</span>
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="alert alert-info">
+                                        <i class="fas fa-info-circle me-2"></i>
+                                        <strong>Express Delivery:</strong> Order before 2 PM for next-day delivery in Dhaka, 2 days elsewhere.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Gift Options -->
+                    <div class="card mb-3">
+                        <div class="card-header bg-success text-white">
+                            <h6 class="mb-0"><i class="fas fa-gift me-2"></i>Gift Options</h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="form-check mb-3">
+                                <input class="form-check-input" type="checkbox" name="is_gift" id="is_gift">
+                                <label class="form-check-label" for="is_gift">
+                                    <strong>This is a gift order</strong>
+                                </label>
+                            </div>
+                            <div class="form-check mb-3">
+                                <input class="form-check-input" type="checkbox" name="gift_wrap" id="gift_wrap">
+                                <label class="form-check-label" for="gift_wrap">
+                                    <strong>Gift Wrapping (+৳50)</strong>
+                                </label>
+                            </div>
+                            <div class="mb-3">
+                                <label for="gift_message" class="form-label">Gift Message (Optional)</label>
+                                <textarea class="form-control" id="gift_message" name="gift_message" rows="3" 
+                                          placeholder="Add a personal message for the recipient..."></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-header bg-white">
+                            <h5 class="mb-0">Order Notes (Optional)</h5>
+                        </div>
+                        <div class="card-body">
+                            <textarea class="form-control" id="notes" name="notes" rows="3" 
+                                      placeholder="Any special instructions for your order..."></textarea>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            
+            <!-- Order Summary -->
+            <div class="col-lg-4">
+                <div class="card border-0 shadow-sm sticky-top" style="top: 120px;">
+                    <div class="card-header bg-white">
+                        <h5 class="mb-0">Order Summary</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>Subtotal</span>
+                            <span>৳{{ "%.2f"|format(total) }}</span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>Shipping</span>
+                            <span id="summary-shipping">৳0.00</span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>Tax (15%)</span>
+                            <span>৳{{ "%.2f"|format(total * 0.15) }}</span>
+                        </div>
+                        {% set promo_discount = session.get('promo_discount', 0) %}
+                        {% if promo_discount > 0 %}
+                        <div class="d-flex justify-content-between mb-2 text-success">
+                            <span>Promo Discount</span>
+                            <span>-৳{{ "%.2f"|format(promo_discount) }}</span>
+                        </div>
+                        {% endif %}
+                        <div class="d-flex justify-content-between mb-2 text-success summary-gift-card" style="display: none;">
+                            <span>Gift Card</span>
+                            <span id="gift-card-discount-val">-৳0.00</span>
+                        </div>
+                        <hr>
+                        <div class="d-flex justify-content-between fw-bold mb-3">
+                            <span>Total</span>
+                            <span class="text-warning final-total-display">৳{{ "%.2f"|format(total + (total * 0.15) - promo_discount) }}</span>
+                        </div>
+                        
+                        <button type="submit" form="checkoutForm" class="btn btn-warning btn-lg w-100 fw-bold">
+                            <i class="fas fa-lock me-2"></i>Place Order
+                        </button>
+                        
+                        <div class="text-center mt-3">
+                            <small class="text-muted">
+                                <i class="fas fa-shield-alt me-1"></i>
+                                Secure checkout powered by SSL encryption
+                            </small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Handle payment method changes
+    const paymentMethods = document.querySelectorAll('input[name="payment_method"]');
+    const giftCardDetails = document.getElementById('gift_card_details');
+    
+    paymentMethods.forEach(method => {
+        method.addEventListener('change', function() {
+            // Hide all special payment details
+            if (giftCardDetails) giftCardDetails.style.display = 'none';
+            
+            // Show relevant payment details
+            if (this.value === 'gift_card') {
+                if (giftCardDetails) giftCardDetails.style.display = 'block';
+            }
+        });
+    });
+    
+    // Calculate total with delivery and gift options
+    function calculateTotal() {
+        // subtotal comes from Jinja2
+        const subtotal = {{ total|default(0) }};
+        const promoDiscount = {{ session.get('promo_discount', 0) }};
+        
+        const deliveryTypeEl = document.querySelector('input[name="delivery_type"]:checked');
+        const deliveryType = deliveryTypeEl ? deliveryTypeEl.value : 'standard';
+        
+        const isGiftEl = document.getElementById('is_gift');
+        const isGift = isGiftEl ? isGiftEl.checked : false;
+        
+        const giftWrapEl = document.getElementById('gift_wrap');
+        const giftWrap = giftWrapEl ? giftWrapEl.checked : false;
+        
+        const paymentMethodEl = document.querySelector('input[name="payment_method"]:checked');
+        const paymentMethod = paymentMethodEl ? paymentMethodEl.value : 'cod';
+        
+        let deliveryCost = 0;
+        let giftCost = 0;
+        let giftCardDiscount = 0;
+        
+        // Calculate delivery cost
+        if (deliveryType === 'express') {
+            deliveryCost = 100;
+        }
+        
+        // Calculate gift costs
+        if (isGift && giftWrap) {
+            giftCost = 50;
+        }
+        
+        // Calculate gift card discount
+        if (paymentMethod === 'gift_card') {
+            const giftCardCodeEl = document.getElementById('gift_card_code');
+            const giftCardCode = giftCardCodeEl ? giftCardCodeEl.value : '';
+            if (giftCardCode && giftCardCode.length >= 8) {
+                giftCardDiscount = Math.min(500, subtotal * 0.1);
+            }
+        }
+        
+        const taxVal = (subtotal * 0.15);
+        const finalTotal = subtotal + taxVal - promoDiscount - giftCardDiscount + deliveryCost + giftCost;
+        
+        // Update total display
+        const totalElements = document.querySelectorAll('.final-total-display');
+        totalElements.forEach(el => {
+            el.textContent = `৳${finalTotal.toFixed(2)}`;
+        });
+        
+        // Update summary items
+        document.getElementById('summary-shipping').textContent = `৳${deliveryCost.toFixed(2)}`;
+        
+        const gcSummary = document.querySelector('.summary-gift-card');
+        if (giftCardDiscount > 0) {
+            gcSummary.style.display = 'flex';
+            document.getElementById('gift-card-discount-val').textContent = `-৳${giftCardDiscount.toFixed(2)}`;
+        } else {
+            gcSummary.style.display = 'none';
+        }
+    }
+    
+    // Add event listeners for all relevant inputs
+    const inputs = document.querySelectorAll('input[name="delivery_type"], #is_gift, #gift_wrap, input[name="payment_method"], #gift_card_code');
+    inputs.forEach(input => {
+        input.addEventListener('change', calculateTotal);
+        if (input.id === 'gift_card_code') {
+            input.addEventListener('input', calculateTotal);
+        }
+    });
+    
+    // Initial calculation
+    calculateTotal();
+});
+</script>
+{% endblock %}

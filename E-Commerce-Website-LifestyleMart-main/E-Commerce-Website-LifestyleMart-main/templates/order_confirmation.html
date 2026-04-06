@@ -1,0 +1,687 @@
+{% extends "base.html" %}
+
+{% block title %}Order Confirmed! - LIFESTYLE MART{% endblock %}
+
+{% block extra_css %}
+<style>
+    .confirmation-hero {
+        background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+        padding: 60px 0 40px;
+        text-align: center;
+        color: white;
+        position: relative;
+        overflow: hidden;
+    }
+    .confirmation-hero::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: radial-gradient(ellipse at center, rgba(245, 114, 36, 0.15) 0%, transparent 60%);
+        animation: pulse-bg 4s ease-in-out infinite;
+    }
+    @keyframes pulse-bg {
+        0%, 100% { transform: scale(1); opacity: 0.7; }
+        50% { transform: scale(1.1); opacity: 1; }
+    }
+    .success-icon-wrapper {
+        position: relative;
+        display: inline-block;
+        margin-bottom: 20px;
+    }
+    .success-circle {
+        width: 110px;
+        height: 110px;
+        background: linear-gradient(135deg, #28a745, #20c997);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto;
+        animation: pop-in 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        box-shadow: 0 0 40px rgba(40, 167, 69, 0.5);
+    }
+    @keyframes pop-in {
+        0% { transform: scale(0); opacity: 0; }
+        100% { transform: scale(1); opacity: 1; }
+    }
+    .success-circle i {
+        font-size: 50px;
+        color: white;
+        animation: check-draw 0.4s 0.5s ease both;
+    }
+    @keyframes check-draw {
+        from { transform: scale(0) rotate(-45deg); }
+        to { transform: scale(1) rotate(0); }
+    }
+    .confetti-ring {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 140px;
+        height: 140px;
+        border: 3px solid rgba(40, 167, 69, 0.3);
+        border-radius: 50%;
+        animation: ring-pulse 1.5s 0.5s ease-out infinite;
+    }
+    @keyframes ring-pulse {
+        0% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+        100% { transform: translate(-50%, -50%) scale(2); opacity: 0; }
+    }
+    .order-number-badge {
+        display: inline-block;
+        background: rgba(245, 114, 36, 0.2);
+        border: 2px solid var(--primary-color);
+        color: #ffa96a;
+        padding: 8px 25px;
+        border-radius: 50px;
+        font-size: 1.1rem;
+        font-weight: 700;
+        letter-spacing: 1px;
+        margin: 15px 0;
+    }
+    /* Toast Notification */
+    .payment-toast {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        z-index: 9999;
+        min-width: 340px;
+        max-width: 400px;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.25);
+        animation: slideInRight 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) both;
+    }
+    @keyframes slideInRight {
+        from { transform: translateX(120%); opacity: 0; }
+        to { transform: translateX(0); opacity: 1; }
+    }
+    .payment-toast.hiding {
+        animation: slideOutRight 0.4s ease forwards;
+    }
+    @keyframes slideOutRight {
+        to { transform: translateX(120%); opacity: 0; }
+    }
+    .toast-header-custom {
+        background: linear-gradient(135deg, #28a745, #20c997);
+        color: white;
+        padding: 14px 18px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+    .toast-header-custom .toast-icon {
+        width: 36px;
+        height: 36px;
+        background: rgba(255,255,255,0.2);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 18px;
+    }
+    .toast-body-custom {
+        background: white;
+        padding: 15px 18px;
+    }
+    .toast-progress {
+        height: 4px;
+        background: linear-gradient(90deg, #28a745, #20c997);
+        animation: shrink 5s linear forwards;
+    }
+    @keyframes shrink {
+        from { width: 100%; }
+        to { width: 0%; }
+    }
+    /* Order Details Card */
+    .order-page-wrapper {
+        background: #f5f5f5;
+        min-height: 60vh;
+        padding: 40px 0;
+    }
+    .order-detail-card {
+        background: white;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 2px 15px rgba(0,0,0,0.07);
+        margin-bottom: 25px;
+    }
+    .card-header-custom {
+        background: linear-gradient(135deg, #f57224, #ff9900);
+        color: white;
+        padding: 16px 25px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        font-weight: 700;
+        font-size: 1rem;
+    }
+    .card-header-custom i {
+        font-size: 1.2rem;
+    }
+    .card-body-custom {
+        padding: 25px;
+    }
+    /* Status Timeline */
+    .status-timeline {
+        display: flex;
+        justify-content: space-between;
+        position: relative;
+        padding: 20px 10px;
+    }
+    .status-timeline::before {
+        content: '';
+        position: absolute;
+        top: 38px;
+        left: 50px;
+        right: 50px;
+        height: 3px;
+        background: #e9ecef;
+        z-index: 0;
+    }
+    .status-step {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 8px;
+        flex: 1;
+        position: relative;
+        z-index: 1;
+    }
+    .status-dot {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 14px;
+        background: #e9ecef;
+        color: #adb5bd;
+        border: 3px solid #e9ecef;
+        transition: all 0.3s;
+    }
+    .status-dot.active {
+        background: #28a745;
+        color: white;
+        border-color: #28a745;
+        box-shadow: 0 0 0 6px rgba(40, 167, 69, 0.15);
+    }
+    .status-dot.done {
+        background: #28a745;
+        color: white;
+        border-color: #28a745;
+    }
+    .status-label {
+        font-size: 0.7rem;
+        font-weight: 600;
+        color: #6c757d;
+        text-align: center;
+    }
+    .status-label.active { color: #28a745; }
+    /* Product Items Table */
+    .order-item-row {
+        display: flex;
+        align-items: center;
+        padding: 15px 0;
+        border-bottom: 1px solid #f0f0f0;
+        gap: 15px;
+    }
+    .order-item-row:last-child { border-bottom: none; }
+    .order-item-img {
+        width: 70px;
+        height: 70px;
+        object-fit: cover;
+        border-radius: 8px;
+        flex-shrink: 0;
+        background: #f5f5f5;
+        border: 1px solid #eee;
+    }
+    .order-item-img-placeholder {
+        width: 70px;
+        height: 70px;
+        border-radius: 8px;
+        background: linear-gradient(135deg, #f0f0f0, #e0e0e0);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        color: #bbb;
+        font-size: 24px;
+    }
+    .order-item-info { flex: 1; min-width: 0; }
+    .order-item-name {
+        font-weight: 600;
+        font-size: 0.95rem;
+        color: #333;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        margin-bottom: 4px;
+    }
+    .order-item-brand { font-size: 0.8rem; color: #888; }
+    .order-item-qty { font-size: 0.82rem; color: #666; margin-top: 4px; }
+    .order-item-price {
+        font-weight: 700;
+        color: #f57224;
+        font-size: 0.95rem;
+        white-space: nowrap;
+    }
+    /* Summary Table */
+    .summary-row {
+        display: flex;
+        justify-content: space-between;
+        padding: 8px 0;
+        font-size: 0.9rem;
+        color: #555;
+    }
+    .summary-row.total {
+        border-top: 2px solid #f0f0f0;
+        margin-top: 8px;
+        padding-top: 14px;
+        font-weight: 800;
+        font-size: 1.1rem;
+        color: #f57224;
+    }
+    /* Info Grid */
+    .info-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 18px;
+    }
+    .info-item label {
+        font-size: 0.75rem;
+        font-weight: 700;
+        color: #888;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        display: block;
+        margin-bottom: 5px;
+    }
+    .info-item p {
+        font-size: 0.9rem;
+        color: #333;
+        margin: 0;
+        font-weight: 500;
+    }
+    /* Payment Badge */
+    .payment-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 5px 14px;
+        border-radius: 30px;
+        font-size: 0.78rem;
+        font-weight: 700;
+    }
+    .payment-paid { background: #d4edda; color: #155724; }
+    .payment-pending { background: #fff3cd; color: #856404; }
+    .payment-failed { background: #f8d7da; color: #721c24; }
+    /* Action Buttons */
+    .action-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 12px 24px;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 0.9rem;
+        text-decoration: none;
+        transition: all 0.3s;
+        border: 2px solid transparent;
+    }
+    .action-btn-primary {
+        background: linear-gradient(135deg, #f57224, #ff9900);
+        color: white;
+    }
+    .action-btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(245, 114, 36, 0.4);
+        color: white;
+    }
+    .action-btn-outline {
+        background: white;
+        color: #f57224;
+        border-color: #f57224;
+    }
+    .action-btn-outline:hover {
+        background: #f57224;
+        color: white;
+        transform: translateY(-2px);
+    }
+    .action-btn-dark {
+        background: #232f3e;
+        color: white;
+    }
+    .action-btn-dark:hover {
+        background: #1a2633;
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(35, 47, 62, 0.3);
+        color: white;
+    }
+    @media (max-width: 576px) {
+        .info-grid { grid-template-columns: 1fr; }
+        .status-timeline::before { display: none; }
+        .payment-toast { min-width: 290px; right: 10px; left: 10px; }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Success Toast Notification -->
+{% if order.payment_status == 'paid' %}
+<div class="payment-toast" id="paymentToast">
+    <div class="toast-header-custom">
+        <div class="toast-icon">
+            <i class="fas fa-check"></i>
+        </div>
+        <div>
+            <div style="font-weight:700; font-size:0.95rem;">Payment Successful! 🎉</div>
+            <div style="font-size:0.8rem; opacity:0.9;">Your order has been confirmed</div>
+        </div>
+        <button onclick="dismissToast()" style="margin-left:auto; background:none; border:none; color:white; font-size:1.2rem; cursor:pointer; padding:0 5px;">&times;</button>
+    </div>
+    <div class="toast-body-custom">
+        <div style="font-size:0.88rem; color:#333; margin-bottom:8px;">
+            <strong>Order #{{ order.order_number }}</strong> has been placed successfully!
+        </div>
+        <div style="font-size:0.82rem; color:#666;">
+            <i class="fas fa-envelope me-1 text-success"></i> A confirmation will be sent to <strong>{{ current_user.email }}</strong>
+        </div>
+        {% if order.val_id %}
+        <div style="font-size:0.82rem; color:#666; margin-top:5px;">
+            <i class="fas fa-shield-alt me-1 text-success"></i> Transaction ID: <code style="font-size:0.78rem;">{{ order.val_id }}</code>
+        </div>
+        {% endif %}
+    </div>
+    <div class="toast-progress" id="toastProgress"></div>
+</div>
+{% endif %}
+
+<!-- Hero Section -->
+<div class="confirmation-hero">
+    <div style="position:relative; z-index:1;">
+        <div class="success-icon-wrapper">
+            <div class="success-circle">
+                {% if order.payment_status == 'paid' %}
+                <i class="fas fa-check"></i>
+                {% elif order.payment_status == 'pending' and order.payment_method == 'cod' %}
+                <i class="fas fa-shopping-bag"></i>
+                {% else %}
+                <i class="fas fa-exclamation"></i>
+                {% endif %}
+            </div>
+            <div class="confetti-ring"></div>
+        </div>
+
+        <h1 style="font-size:2rem; font-weight:800; margin-bottom:8px;">
+            {% if order.payment_status == 'paid' %}
+                🎉 Order Confirmed!
+            {% elif order.payment_method == 'cod' %}
+                ✅ Order Placed!
+            {% else %}
+                ⚠️ Payment Pending
+            {% endif %}
+        </h1>
+        <p style="opacity:0.85; font-size:1rem; margin-bottom:15px;">
+            {% if order.payment_method == 'cod' %}
+                Thank you! Your order is confirmed. Pay when it arrives.
+            {% elif order.payment_status == 'paid' %}
+                Thank you! Your payment was successful. We'll get your order ready.
+            {% else %}
+                Your order is placed but payment is still pending.
+            {% endif %}
+        </p>
+        <div class="order-number-badge">
+            <i class="fas fa-hashtag me-1"></i> {{ order.order_number }}
+        </div>
+        <div style="opacity:0.7; font-size:0.85rem; margin-top:8px;">
+            Placed on {{ order.created_at.strftime('%d %B %Y, %I:%M %p') }}
+        </div>
+    </div>
+</div>
+
+<!-- Main Content -->
+<div class="order-page-wrapper">
+    <div class="container">
+        <div class="row g-4">
+            <!-- Left Column: Items + Summary -->
+            <div class="col-lg-7">
+                <!-- Order Items -->
+                <div class="order-detail-card">
+                    <div class="card-header-custom">
+                        <i class="fas fa-box-open"></i>
+                        Your Items ({{ order.order_items|length }} item{{ 's' if order.order_items|length != 1 else '' }})
+                    </div>
+                    <div class="card-body-custom">
+                        {% if order.order_items %}
+                            {% for item in order.order_items %}
+                            <div class="order-item-row">
+                                {% if item.product and item.product.image %}
+                                    <img src="{{ item.product.image }}" alt="{{ item.product.name }}" class="order-item-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                                    <div class="order-item-img-placeholder" style="display:none;"><i class="fas fa-image"></i></div>
+                                {% else %}
+                                    <div class="order-item-img-placeholder"><i class="fas fa-box"></i></div>
+                                {% endif %}
+                                <div class="order-item-info">
+                                    <div class="order-item-name">{{ item.product.name if item.product else 'Product' }}</div>
+                                    {% if item.product and item.product.brand %}
+                                    <div class="order-item-brand">{{ item.product.brand }}</div>
+                                    {% endif %}
+                                    <div class="order-item-qty">Qty: {{ item.quantity }} × ৳{{ "%.0f"|format(item.price) }}</div>
+                                </div>
+                                <div class="order-item-price">৳{{ "%.0f"|format(item.total) }}</div>
+                            </div>
+                            {% endfor %}
+                        {% else %}
+                            <div class="text-center py-4 text-muted">
+                                <i class="fas fa-box-open fa-2x mb-3"></i>
+                                <p>No items found for this order.</p>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Order Summary -->
+                <div class="order-detail-card">
+                    <div class="card-header-custom">
+                        <i class="fas fa-receipt"></i>
+                        Price Breakdown
+                    </div>
+                    <div class="card-body-custom">
+                        {% set subtotal = order.order_items|sum(attribute='total') %}
+                        <div class="summary-row">
+                            <span>Subtotal ({{ order.order_items|length }} items)</span>
+                            <span>৳{{ "%.2f"|format(subtotal) }}</span>
+                        </div>
+                        {% if order.gift_card_amount and order.gift_card_amount > 0 %}
+                        <div class="summary-row" style="color:#28a745;">
+                            <span><i class="fas fa-tag me-1"></i> Gift Card Discount</span>
+                            <span>-৳{{ "%.2f"|format(order.gift_card_amount) }}</span>
+                        </div>
+                        {% endif %}
+                        <div class="summary-row">
+                            <span><i class="fas fa-truck me-1"></i> Delivery
+                                {% if order.delivery_type == 'express' %}
+                                    <span class="badge bg-warning text-dark ms-1" style="font-size:0.7rem;">Express</span>
+                                {% endif %}
+                            </span>
+                            <span>
+                                {% if order.delivery_type == 'express' %}৳100.00
+                                {% else %}<span class="text-success">Free</span>{% endif %}
+                            </span>
+                        </div>
+                        {% if order.gift_wrap %}
+                        <div class="summary-row">
+                            <span><i class="fas fa-gift me-1"></i> Gift Wrapping</span>
+                            <span>৳50.00</span>
+                        </div>
+                        {% endif %}
+                        <div class="summary-row total">
+                            <span>Grand Total</span>
+                            <span>৳{{ "%.2f"|format(order.total_amount) }}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column: Details -->
+            <div class="col-lg-5">
+                <!-- Order Status -->
+                <div class="order-detail-card">
+                    <div class="card-header-custom">
+                        <i class="fas fa-shipping-fast"></i>
+                        Order Status
+                    </div>
+                    <div class="card-body-custom">
+                        <div class="status-timeline">
+                            {% set steps = [('confirmed', 'fas fa-check', 'Confirmed'), ('processing', 'fas fa-cog', 'Processing'), ('shipped', 'fas fa-truck', 'Shipped'), ('delivered', 'fas fa-home', 'Delivered')] %}
+                            {% set current = order.status %}
+                            {% set order_seq = {'pending': 0, 'processing': 1, 'shipped': 2, 'delivered': 3} %}
+                            {% set current_idx = order_seq.get(current, 0) %}
+                            {% for key, icon, label in steps %}
+                                {% set step_idx = loop.index0 %}
+                                <div class="status-step">
+                                    <div class="status-dot {% if step_idx <= current_idx %}done{% endif %} {% if step_idx == current_idx %}active{% endif %}">
+                                        <i class="{{ icon }}"></i>
+                                    </div>
+                                    <div class="status-label {% if step_idx <= current_idx %}active{% endif %}">{{ label }}</div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                        {% if order.estimated_delivery %}
+                        <div class="text-center mt-2 p-3" style="background:#f8f9fa; border-radius:8px;">
+                            <div style="font-size:0.8rem; color:#666; margin-bottom:4px;">Estimated Delivery</div>
+                            <div style="font-weight:700; color:#f57224; font-size:1rem;">
+                                <i class="fas fa-calendar me-1"></i>
+                                {{ order.estimated_delivery.strftime('%d %B %Y') }}
+                            </div>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Payment Info -->
+                <div class="order-detail-card">
+                    <div class="card-header-custom">
+                        <i class="fas fa-credit-card"></i>
+                        Payment Details
+                    </div>
+                    <div class="card-body-custom">
+                        <div class="info-grid">
+                            <div class="info-item">
+                                <label>Payment Method</label>
+                                <p>
+                                    {% if order.payment_method == 'cod' %}
+                                        <i class="fas fa-money-bill-wave text-success me-1"></i> Cash on Delivery
+                                    {% elif order.payment_method in ['bkash', 'nagad'] %}
+                                        <i class="fas fa-mobile-alt text-info me-1"></i> {{ order.payment_method|title }}
+                                    {% elif order.payment_method == 'card' %}
+                                        <i class="fas fa-credit-card text-primary me-1"></i> Card Payment
+                                    {% else %}
+                                        <i class="fas fa-gift text-warning me-1"></i> Gift Card
+                                    {% endif %}
+                                </p>
+                            </div>
+                            <div class="info-item">
+                                <label>Payment Status</label>
+                                <p>
+                                    <span class="payment-badge payment-{{ order.payment_status }}">
+                                        <i class="fas fa-{% if order.payment_status == 'paid' %}check-circle{% elif order.payment_status == 'failed' %}times-circle{% else %}clock{% endif %}"></i>
+                                        {{ order.payment_status|title }}
+                                    </span>
+                                </p>
+                            </div>
+                            {% if order.val_id %}
+                            <div class="info-item" style="grid-column: 1/-1;">
+                                <label>Transaction / Validation ID</label>
+                                <p><code style="font-size:0.82rem; background:#f8f9fa; padding:3px 8px; border-radius:4px;">{{ order.val_id }}</code></p>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Shipping Info -->
+                <div class="order-detail-card">
+                    <div class="card-header-custom">
+                        <i class="fas fa-map-marker-alt"></i>
+                        Delivery Address
+                    </div>
+                    <div class="card-body-custom">
+                        <div class="info-grid">
+                            <div class="info-item" style="grid-column: 1/-1;">
+                                <label>Shipping To</label>
+                                <p>{{ order.shipping_address }}</p>
+                            </div>
+                            <div class="info-item">
+                                <label>Delivery Type</label>
+                                <p>
+                                    {% if order.delivery_type == 'express' %}
+                                        <span class="badge bg-warning text-dark">⚡ Express</span>
+                                    {% else %}
+                                        <span class="badge bg-secondary">🚚 Standard</span>
+                                    {% endif %}
+                                </p>
+                            </div>
+                            {% if order.is_gift %}
+                            <div class="info-item">
+                                <label>Gift Order</label>
+                                <p><i class="fas fa-gift text-success me-1"></i> Yes{% if order.gift_wrap %}, with wrapping{% endif %}</p>
+                            </div>
+                            {% endif %}
+                            {% if order.notes %}
+                            <div class="info-item" style="grid-column: 1/-1;">
+                                <label>Order Notes</label>
+                                <p style="font-style: italic; color:#666;">{{ order.notes }}</p>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="d-flex gap-3 flex-wrap">
+                    <a href="{{ url_for('shop') }}" class="action-btn action-btn-primary flex-fill justify-content-center">
+                        <i class="fas fa-shopping-bag"></i> Continue Shopping
+                    </a>
+                    <a href="{{ url_for('profile') }}" class="action-btn action-btn-dark flex-fill justify-content-center">
+                        <i class="fas fa-list-alt"></i> My Orders
+                    </a>
+                </div>
+                {% if order.tracking_number %}
+                <div class="mt-3">
+                    <a href="{{ url_for('track_order') }}" class="action-btn action-btn-outline w-100 justify-content-center">
+                        <i class="fas fa-shipping-fast"></i> Track Your Package
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Auto-dismiss the toast after 5 seconds
+    const toast = document.getElementById('paymentToast');
+    if (toast) {
+        setTimeout(() => dismissToast(), 5000);
+    }
+});
+
+function dismissToast() {
+    const toast = document.getElementById('paymentToast');
+    if (toast) {
+        toast.classList.add('hiding');
+        setTimeout(() => { if(toast) toast.remove(); }, 400);
+    }
+}
+</script>
+{% endblock %}
