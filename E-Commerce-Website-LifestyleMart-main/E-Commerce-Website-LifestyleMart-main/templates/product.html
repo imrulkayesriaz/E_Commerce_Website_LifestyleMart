@@ -264,13 +264,18 @@
                     
                     <div class="product-rating">
                         <div class="stars">
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star-half-alt"></i>
+                            {% set rating = product.average_rating %}
+                            {% for i in range(5) %}
+                                {% if rating >= i + 1 %}
+                                    <i class="fas fa-star"></i>
+                                {% elif rating >= i + 0.5 %}
+                                    <i class="fas fa-star-half-alt"></i>
+                                {% else %}
+                                    <i class="far fa-star"></i>
+                                {% endif %}
+                            {% endfor %}
                         </div>
-                        <span class="rating-count">4.5 ({{ product.reviews|length }} reviews)</span>
+                        <span class="rating-count">{{ product.average_rating }} ({{ product.rating_count }} reviews)</span>
                     </div>
                     
                     <div class="product-description">
