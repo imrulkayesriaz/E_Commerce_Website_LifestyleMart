@@ -218,6 +218,9 @@
                         <div class="col-md-4">
                             <div class="cart-item-details">
                                 <h6>{{ item.product.name }}</h6>
+                                {% if item.size %}
+                                <p class="text-muted mb-1">Size: <strong>{{ item.size }}</strong></p>
+                                {% endif %}
                                 <p class="text-muted mb-2">SKU: LSM{{ item.product.id }}</p>
                                 <div class="product-rating">
                                     <div class="stars">

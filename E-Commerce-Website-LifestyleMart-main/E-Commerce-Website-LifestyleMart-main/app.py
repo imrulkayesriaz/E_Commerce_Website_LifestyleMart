@@ -159,6 +159,7 @@ class OrderItem(db.Model):
     quantity = db.Column(db.Integer, nullable=False)
     price = db.Column(db.Float, nullable=False)
     total = db.Column(db.Float, nullable=False)
+    size = db.Column(db.String(20))
 
 class Review(db.Model):
     __tablename__ = 'reviews'
@@ -992,6 +993,7 @@ def careers():
 @app.route('/cart')
 def cart():
     cart_items = session.get('cart', {})
+    cart_sizes = session.get('cart_sizes', {})
     products = []
     total = 0
     
@@ -1003,7 +1005,8 @@ def cart():
             products.append({
                 'product': product,
                 'quantity': quantity,
-                'subtotal': subtotal
+                'subtotal': subtotal,
+                'size': cart_sizes.get(str(product_id))
             })
     
     return render_template('cart.html', products=products, total=total)
@@ -1020,6 +1023,12 @@ def add_to_cart():
     cart = session.get('cart', {})
     cart[product_id] = cart.get(product_id, 0) + quantity
     session['cart'] = cart
+    
+    size = request.form.get('size')
+    if size:
+        cart_sizes = session.get('cart_sizes', {})
+        cart_sizes[product_id] = size
+        session['cart_sizes'] = cart_sizes
     
     cart_count = sum(cart.values())
     
@@ -1198,6 +1207,7 @@ def checkout():
             total_amount = 0
             order_items = []
             
+            cart_sizes = session.get('cart_sizes', {})
             for product_id, quantity in cart.items():
                 product = Product.query.get(product_id)
                 if product and product.stock >= quantity:
@@ -1207,7 +1217,8 @@ def checkout():
                         'product_id': product_id,
                         'quantity': quantity,
                         'price': product.price,
-                        'total': subtotal
+                        'total': subtotal,
+                        'size': cart_sizes.get(str(product_id))
                     })
                     # Update stock
                     product.stock -= quantity
@@ -1270,7 +1281,8 @@ def checkout():
                     product_id=item['product_id'],
                     quantity=item['quantity'],
                     price=item['price'],
-                    total=item['total']
+                    total=item['total'],
+                    size=item.get('size')
                 )
                 db.session.add(order_item)
             
@@ -1278,6 +1290,7 @@ def checkout():
             
             # Clear cart
             session['cart'] = {}
+            session.pop('cart_sizes', None)
             
             # If not COD, redirect to payment gateway
             if form.payment_method.data != 'cod':
