@@ -374,7 +374,7 @@ def index():
     # Get active flash deals
     flash_deals = FlashDeal.query.filter_by(is_active=True).filter(
         FlashDeal.end_time > datetime.utcnow()
-    ).order_by(FlashDeal.end_time.asc()).limit(4).all()
+    ).order_by(FlashDeal.end_time.asc()).limit(3).all()
     
     # Get brand seller IDs for direct messaging
     brand_emails = {
